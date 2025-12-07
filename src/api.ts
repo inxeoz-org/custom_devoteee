@@ -1,15 +1,19 @@
 import { API_BASE } from "$lib/env.js";
 
-const DEVOTEE = `${API_BASE}/api/method/custom_booking.custom_booking.`;
-const APPOINTMENT = `${API_BASE}/api/method/custom_booking.custom_booking.`;
-const BOOKING = `${API_BASE}/api/method/custom_booking.custom_booking.`;
+const DEVOTEE = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.devoteee.`;
+const SLOT = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.slot.slot.`;
+const PROTOCOL = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.vip_protocol.vip_protocol.`;
+
+// Import store functions for logout
+import { auth_token, user_logged_in } from "@src/store.js";
+import { goto } from "$app/navigation";
 
 // ========== API FUNCTIONS ========== //
 
 // Authentication APIs
 export async function loginCheck(phone: string) {
   try {
-    const res = await fetch(DEVOTEE + "devoteee_login", {
+    const res = await fetch(DEVOTEE + "devoteee.devoteee_login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone }),
@@ -23,7 +27,7 @@ export async function loginCheck(phone: string) {
 
 export async function verifyOtpLogin(phone: string, otp: string) {
   try {
-    const res = await fetch(DEVOTEE + "devoteee_login", {
+    const res = await fetch(DEVOTEE + "devoteee.devoteee_login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone, otp }),
@@ -42,7 +46,7 @@ export async function getDevoteeProfile(token: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
     });
     return await res.json();
@@ -58,12 +62,12 @@ export async function updateProfile(token: string, profileData: any) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify(profileData),
     });
     return await res.json();
-   } catch (err: any) {
+  } catch (err: any) {
     console.error("updateProfile:", err);
     return null;
   }
@@ -76,7 +80,7 @@ export async function requestUpdatePhone(token: string, newPhone: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify({ new_phone: newPhone }),
     });
@@ -87,13 +91,17 @@ export async function requestUpdatePhone(token: string, newPhone: string) {
   }
 }
 
-export async function updatePhone(token: string, newPhone: string, otpPhone: string) {
+export async function updatePhone(
+  token: string,
+  newPhone: string,
+  otpPhone: string,
+) {
   try {
     const res = await fetch(DEVOTEE + "profile.update_cred", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify({ new_phone: newPhone, otp_phone: otpPhone }),
     });
@@ -111,7 +119,7 @@ export async function requestUpdateEmail(token: string, newEmail: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify({ new_email: newEmail }),
     });
@@ -122,24 +130,26 @@ export async function requestUpdateEmail(token: string, newEmail: string) {
   }
 }
 
-export async function updateEmail(token: string, newEmail: string, otpEmail: string) {
+export async function updateEmail(
+  token: string,
+  newEmail: string,
+  otpEmail: string,
+) {
   try {
     const res = await fetch(DEVOTEE + "profile.update_cred", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify({ new_email: newEmail, otp_email: otpEmail }),
     });
     return await res.json();
-   } catch (err: any) {
+  } catch (err: any) {
     console.error("updateEmail:", err);
     return null;
   }
 }
-
-
 
 // Companion APIs
 export async function getDefaultCompanion(token: string) {
@@ -148,7 +158,7 @@ export async function getDefaultCompanion(token: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
     });
     return await res.json();
@@ -158,13 +168,16 @@ export async function getDefaultCompanion(token: string) {
   }
 }
 
-export async function addCompanion(token: string, companionData: { companion_name: string; gender: string; age: number }) {
+export async function addCompanion(
+  token: string,
+  companionData: { companion_name: string; gender: string; age: number },
+) {
   try {
     const res = await fetch(DEVOTEE + "profile.add_companion", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify(companionData),
     });
@@ -181,33 +194,34 @@ export async function removeCompanion(token: string, companionId: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify({ companion_id: companionId }),
     });
     return await res.json();
-   } catch (err: any) {
+  } catch (err: any) {
     console.error("removeCompanion:", err);
     return null;
   }
 }
 
-
-
 // Appointment APIs
-export async function createAppointment(token: string, appointmentData: {
-  slot: string;
-  slot_date: string;
-  protocol: string;
-  state: string;
-  companion: Array<{ companion_name: string; age: number; gender: string }>;
-}) {
+export async function createAppointment(
+  token: string,
+  appointmentData: {
+    slot: string;
+    slot_date: string;
+    protocol: string;
+    state: string;
+    companion: Array<{ companion_name: string; age: number; gender: string }>;
+  },
+) {
   try {
-    const res = await fetch(APPOINTMENT + "appointment.create_appointment", {
+    const res = await fetch(DEVOTEE + "appointment.create_appointment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify(appointmentData),
     });
@@ -220,11 +234,11 @@ export async function createAppointment(token: string, appointmentData: {
 
 export async function getAppointment(token: string, appointmentId: string) {
   try {
-    const res = await fetch(APPOINTMENT + "appointment.get_appointment_details", {
+    const res = await fetch(DEVOTEE + "appointment.get_appointment_details", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify({ appointment_id: appointmentId }),
     });
@@ -237,11 +251,11 @@ export async function getAppointment(token: string, appointmentId: string) {
 
 export async function submitAppointment(token: string, appointmentId: string) {
   try {
-    const res = await fetch(APPOINTMENT + "appointment.submit_appointment", {
+    const res = await fetch(DEVOTEE + "appointment.submit_appointment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify({ appointment_id: appointmentId }),
     });
@@ -252,37 +266,39 @@ export async function submitAppointment(token: string, appointmentId: string) {
   }
 }
 
-export async function getAppointmentList(token: string, params?: {
-  limitStart?: number;
-  pageLength?: number;
-  darshan_type?: string;
-  workflow_state?: string;
-}) {
+export async function getAppointmentList(
+  token: string,
+  params?: {
+    limitStart?: number;
+    pageLength?: number;
+    darshan_type?: string;
+    workflow_state?: string;
+  },
+) {
   try {
-    const res = await fetch(APPOINTMENT + "appointment.get_appointment_list", {
+    const res = await fetch(DEVOTEE + "appointment.get_appointment_list", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify(params || {}),
     });
     return await res.json();
-   } catch (err: any) {
+  } catch (err: any) {
     console.error("getAppointmentList:", err);
     return null;
   }
 }
 
-
 // Booking Slot APIs
 export async function getBookingSlotInfo(token: string, slotDate: string) {
   try {
-    const res = await fetch(BOOKING + "get_slot_occupancy_info", {
+    const res = await fetch(SLOT + "get_slot_occupancy_info", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token
+        Authorization: token,
       },
       body: JSON.stringify({ slot_date: slotDate }),
     });
@@ -295,10 +311,10 @@ export async function getBookingSlotInfo(token: string, slotDate: string) {
 
 export async function getVipDarshanSlots(slotDate: string) {
   try {
-    const res = await fetch(BOOKING + "get_vip_darshan_slots", {
+    const res = await fetch(SLOT + "get_vip_darshan_slots", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ slot_date: slotDate }),
     });
@@ -312,10 +328,10 @@ export async function getVipDarshanSlots(slotDate: string) {
 // VIP Protocol APIs
 export async function getProtocolInfo(protocolName: string) {
   try {
-    const res = await fetch(BOOKING + "protocol_info", {
+    const res = await fetch(PROTOCOL + "protocol_info", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ protocol_name: protocolName }),
     });
@@ -328,77 +344,40 @@ export async function getProtocolInfo(protocolName: string) {
 
 export async function getProtocolList(protocolName: string) {
   try {
-    const res = await fetch(BOOKING + "protocol_list", {
+    const res = await fetch(PROTOCOL + "protocol_list", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ protocol_name: protocolName }),
     });
     return await res.json();
-   } catch (err: any) {
+  } catch (err: any) {
     console.error("getProtocolList:", err);
     return null;
   }
 }
 
-
-
-// Authentication APIs
-export async function logout(token: string) {
+// Logout function
+export async function logout() {
   try {
-    const res = await fetch(`${API_BASE}/api/method/logout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-    });
-    const data = await res.json();
-    return data;
+    // Clear the authentication token
+    auth_token.set("");
+
+    // Set user as logged out
+    user_logged_in.set(false);
+
+    // Navigate to home page
+    await goto("/");
+
+    return { success: true, message: "Logged out successfully" };
   } catch (err: any) {
     console.error("logout:", err);
-    return null;
+    return { success: false, message: "Logout failed" };
   }
 }
 
-export async function getAuthToken(phone: number) {
-  try {
-    const url = DEVOTEE + "get_auth_token";
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        "phone": phone + ""
-      }),
-    });
-
-    const data = await res.json();
-
-    return data;
-   } catch (err: any) {
-    console.error("getAuthToken:", err);
-    return null;
-  }
-}
-
-// Utility functions
-export function deleteAllCookies() {
-  // Implementation for deleting cookies
-  const cookies = document.cookie.split(";");
-
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i];
-    const eqPos = cookie.indexOf("=");
-    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-
-    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-  }
-}
-
-// Custom registration function
+// Registration function
 export async function registrationDevotee(phone: number) {
   try {
     const res = await fetch(DEVOTEE + "create_devoteee_user", {
@@ -410,5 +389,18 @@ export async function registrationDevotee(phone: number) {
   } catch (err: any) {
     console.error("registrationDevotee:", err);
     return null;
+  }
+}
+
+// Utility function to delete all cookies
+export function deleteAllCookies() {
+  const cookies = document.cookie.split(";");
+
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
   }
 }
