@@ -47,9 +47,9 @@
 
         const result = await verifyOtpLogin(phone, otp);
 
-        if (result?.message?.token) {
+        if (result?.message) {
             // Save the token
-            auth_token.set(result.message.token);
+            auth_token.set(result.message);
             user_logged_in.set(true);
             toast.success("Login successful");
             await goto("/dashboard");
@@ -64,8 +64,14 @@
     <Card class="w-full max-w-md p-10">
         {#if !otpSent}
             <!-- Phone Number Input -->
-            <form class="space-y-4" on:submit|preventDefault={sendOtp} aria-busy={otpLoading}>
-                <h2 class="text-xl font-semibold text-gray-800 flex justify-center">
+            <form
+                class="space-y-4"
+                on:submit|preventDefault={sendOtp}
+                aria-busy={otpLoading}
+            >
+                <h2
+                    class="text-xl font-semibold text-gray-800 flex justify-center"
+                >
                     Login
                 </h2>
 
@@ -98,7 +104,9 @@
         {:else}
             <!-- OTP Verification -->
             <form class="space-y-4" on:submit={verifyOtp} aria-busy={loading}>
-                <h2 class="text-xl font-semibold text-gray-800 flex justify-center">
+                <h2
+                    class="text-xl font-semibold text-gray-800 flex justify-center"
+                >
                     Verify OTP
                 </h2>
 
@@ -120,14 +128,30 @@
                     </p>
                 </div>
 
-                <div class="flex items-center justify-center space-x-2">
+                <div class="flex items-center justify-center space-x-2 mb-4">
                     <Button
                         type="button"
                         color="light"
-                        on:click={() => { otpSent = false; otp = ""; }}
+                        on:click={() => {
+                            otpSent = false;
+                            otp = "";
+                            loading = false;
+                            otpLoading = false;
+                        }}
                     >
                         Back
                     </Button>
+                    <Button
+                        type="button"
+                        color="outline"
+                        disabled={otpLoading}
+                        on:click={sendOtp}
+                    >
+                        {#if otpLoading}Sending...{:else}Resend OTP{/if}
+                    </Button>
+                </div>
+
+                <div class="flex items-center justify-center">
                     <Button
                         type="submit"
                         disabled={loading}

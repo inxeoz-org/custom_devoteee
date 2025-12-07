@@ -6,18 +6,10 @@
     import { getDevoteeProfile } from "@src/api.js";
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
-    import { deleteAllCookies } from "@src/api.ts";
-
-    interface ProfileDetails {
-        devoteee_name?: string;
-        is_ekyc_complete?: number;
-        [key: string]: any;
-    }
 
     export let title = "Dashboard";
     export let welcome = "Welcome back!";
 
-    let devoteee_details: ProfileDetails | null = null;
     let devoteee_name = "";
     let is_ekyc_complete = 0;
     let show_dashboard = false;
@@ -66,7 +58,7 @@
         try {
             const token = get(auth_token);
             const data = await getDevoteeProfile(token);
-            const devoteee_details = data?.message?.profile;
+            const devoteee_details = data?.message;
 
             if (devoteee_details) {
                 show_dashboard = true;
