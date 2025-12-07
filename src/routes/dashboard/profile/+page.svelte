@@ -1,7 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { Card, Avatar, Badge, Button } from "flowbite-svelte";
-    import { get_self_profile } from "@src/helper_devoteee.js";
+    import { getDevoteeProfile } from "@src/api.js";
+    import { auth_token } from "@src/store.js";
+    import { get } from "svelte/store";
     import { goto } from "$app/navigation";
 
     let profile: any = null;
@@ -12,7 +14,9 @@
 
     onMount(async () => {
         try {
-            profile = await get_self_profile();
+            const token = get(auth_token);
+            const data = await getDevoteeProfile(token);
+            profile = data?.message?.profile;
         } catch (e) {
             error = "Failed to load profile";
             console.error(e);

@@ -3,7 +3,7 @@
     import { Card, Button, Label, Input } from "flowbite-svelte";
     import { Badge } from "flowbite-svelte";
 
-    import { registration_devoteee } from "@src/helper_devoteee.js";
+    import { registrationDevotee } from "@src/api.ts";
     import { toast } from "svelte-sonner";
 
     // phone as string to allow leading + / 0 etc
@@ -15,7 +15,7 @@
 
         loading = true;
 
-        const json_data = await registration_devoteee(phone);
+        const json_data = await registrationDevotee(phone);
 
         if (json_data?.message?.res) {
             toast.success("Registration Success");

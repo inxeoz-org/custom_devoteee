@@ -3,7 +3,9 @@
     import { Button, Modal, Badge } from "flowbite-svelte";
     import { formatDateTime } from "@src/utils.js";
 
-    import { get_appointment } from "@src/helper_devoteee.js";
+    import { getAppointment } from "@src/api.js";
+    import { auth_token } from "@src/store.js";
+    import { get } from "svelte/store";
 
     let workflow_state = "Demo";
 
@@ -26,7 +28,8 @@
         loading = true;
         error = null;
         try {
-            const payload = await get_appointment(appointmentId);
+            const token = get(auth_token);
+            const payload = await getAppointment(token, appointmentId);
             data = payload?.message ?? payload;
             workflow_state = data.workflow_state;
         } catch (err: any) {

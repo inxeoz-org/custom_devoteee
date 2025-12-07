@@ -19,11 +19,17 @@
     // Import Toaster once (global notifications)
     import { Toaster } from "svelte-sonner";
     import { onMount } from "svelte";
-    import { get_logged_user, logout } from "@src/helper.js";
+    import { logout } from "@src/api.ts";
+    import { auth_token } from "@src/store.js";
+    import { get } from "svelte/store";
 
     onMount(async () => {
         loading = true;
-        await get_logged_user();
+        // Check if token exists (set during login)
+        const token = get(auth_token);
+        if (token) {
+            user_logged_in.set(true);
+        }
         loading = false;
     });
 </script>

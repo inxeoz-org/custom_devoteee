@@ -3,8 +3,10 @@
     import { goto } from "$app/navigation";
     import { Card, Button, Alert, Badge } from "flowbite-svelte";
 
-    import { get_self_profile } from "@src/helper_devoteee.js";
-    import { deleteAllCookies } from "@src/helper.js";
+    import { getDevoteeProfile } from "@src/api.js";
+    import { auth_token } from "@src/store.js";
+    import { get } from "svelte/store";
+    import { deleteAllCookies } from "@src/api.ts";
 
     interface ProfileDetails {
         devoteee_name?: string;
@@ -62,7 +64,9 @@
 
     onMount(async () => {
         try {
-            const devoteee_details = await get_self_profile();
+            const token = get(auth_token);
+            const data = await getDevoteeProfile(token);
+            const devoteee_details = data?.message?.profile;
 
             if (devoteee_details) {
                 show_dashboard = true;

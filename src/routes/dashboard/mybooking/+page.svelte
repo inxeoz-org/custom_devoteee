@@ -2,7 +2,9 @@
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import ShowAppointment from "@src/routes/ShowAppointment.svelte";
-    import { get_appointment_list } from "@src/helper_devoteee.js";
+    import { getAppointmentList } from "@src/api.js";
+    import { auth_token } from "@src/store.js";
+    import { get } from "svelte/store";
     import type { Booking, Status } from "@src/appointment.js";
 
     import { Card, Button, Badge } from "flowbite-svelte";
@@ -38,7 +40,11 @@
         loading = true;
         error = null;
 
-        const data = await get_appointment_list(limitStart, pageLength);
+        const token = get(auth_token);
+        const data = await getAppointmentList(token, {
+            limitStart,
+            pageLength
+        });
         bookings = (data as any).message as Booking[];
         loading = false;
     }

@@ -1,10 +1,8 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import {
-        create_appointment,
-        get_self_profile,
-        get_booking_slot_info,
-    } from "@src/helper_devoteee.js";
+    import { createAppointment, getDevoteeProfile, getBookingSlotInfo } from "@src/api.js";
+    import { auth_token } from "@src/store.js";
+    import { get } from "svelte/store";
     import { Badge } from "flowbite-svelte";
     import { ArrowUpRightFromSquareOutline } from "flowbite-svelte-icons";
     import { slotTimeTo12hr } from "@src/utils.js";
@@ -45,7 +43,15 @@
     let authorityLetterFile: File | null = null;
     let loading = false;
     let bookingSuccess = false;
-    let slots_data: any = null;
+    interface Slot {
+        slot_name: string;
+        slot_start_time: string;
+        slot_end_time: string;
+        seats: number;
+        slot_capacity: number;
+        [key: string]: any; // Allow additional properties
+    }
+    let slots_data: Slot[] = [];
 
     $: feePerPerson =
         protocols.find((p) => p.value === selectedProtocolValue)?.fee ?? 0;
@@ -78,7 +84,8 @@
             })),
         };
         try {
-            await create_appointment(details);
+            const token = get(auth_token);
+            await createAppointment(token, details);
             bookingSuccess = true;
         } catch (err) {
             console.error(err);
@@ -91,7 +98,7 @@
         const input = e.target as HTMLInputElement;
         authorityLetterFile = input.files?.[0] ?? null;
     }
-    function slotClass(s) {
+    function slotClass(s: Slot) {
         const isSelected = selectedSlotName === s.slot_name;
         return `
             border rounded-lg transition
@@ -101,8 +108,9 @@
     }
 
     async function fetch_slot_info(date: string) {
-        const data = await get_booking_slot_info(date);
-        slots_data = data.message;
+        const token = get(auth_token);
+        const data = await getBookingSlotInfo(token, date);
+        slots_data = data?.message || [];
     }
     function select_slot(
         slot_name: string,
@@ -123,8 +131,10 @@
         );
     }
     onMount(async () => {
-        profile_data = await get_self_profile();
-        devoteee_name = profile_data.devoteee_name;
+        const token = get(auth_token);
+        const data = await getDevoteeProfile(token);
+        profile_data = data?.message?.profile;
+        devoteee_name = profile_data?.devoteee_name;
     });
 </script>
 
@@ -168,10 +178,11 @@
                 {devoteee_name}
             </div>
 
-            <label class="block text-sm font-semibold text-gray-700 mt-2 mb-1"
+            <label for="protocol-select" class="block text-sm font-semibold text-gray-700 mt-2 mb-1"
                 >Protocol</label
             >
             <select
+                id="protocol-select"
                 class="w-full border border-gray-300 rounded-lg p-2 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
                 bind:value={selectedProtocolValue}
             >
@@ -255,10 +266,11 @@
                 </div>
             </div>
 
-            <label class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
+            <label for="date-input" class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
                 >Date of Visit</label
             >
             <input
+                id="date-input"
                 class="border border-gray-300 rounded-lg p-2 w-full"
                 type="date"
                 bind:value={appointment_date}
@@ -301,10 +313,11 @@
                 {/if}
             </div>
 
-            <label class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
+            <label for="file-input" class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
                 >Authority Letter (PDF)</label
             >
             <input
+                id="file-input"
                 class="border border-gray-300 rounded-lg p-2 w-full"
                 type="file"
                 accept=".pdf"

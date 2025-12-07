@@ -1,6 +1,8 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { get_self_profile, update_profile } from "@src/helper_devoteee.js";
+    import { getDevoteeProfile, updateProfile } from "@src/api.js";
+    import { auth_token } from "@src/store.js";
+    import { get } from "svelte/store";
     import LoadingPage from "@src/routes/LoadingPage.svelte";
     import {
         Card,
@@ -29,7 +31,7 @@
 
     let submitted = false;
 
-    async function handleSubmit(e) {
+    async function handleSubmit(e: Event) {
         e.preventDefault();
         loading = true;
 
@@ -41,7 +43,8 @@
             aadhar: aadhar.trim(),
         };
 
-        const json = await update_profile(info);
+        const token = get(auth_token);
+        const json = await updateProfile(token, info);
 
         toast(json?.message || "Profile saved.");
         submitted = true;
@@ -49,7 +52,9 @@
     }
 
     async function reset_profile() {
-        profle_data = await get_self_profile();
+        const token = get(auth_token);
+        const data = await getDevoteeProfile(token);
+        profle_data = data?.message?.profile;
 
         name = profle_data?.devoteee_name ?? "";
         gender = profle_data?.gender ?? "";

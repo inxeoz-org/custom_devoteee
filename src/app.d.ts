@@ -8,6 +8,16 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	interface Window {
+		__ENV__?: {
+			API_BASE?: string;
+		};
+	}
+}
+
+declare module 'flowbite-svelte' {
+	export * from 'flowbite-svelte/dist/index';
 }
 
 export {};
