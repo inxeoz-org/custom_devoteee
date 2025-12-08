@@ -46,7 +46,7 @@
             gender: "",
             age: 0,
         };
-        companion.push(c);
+        companion = [...companion, c];
     }
     function removeCompanion(i: number) {
         companion = companion.filter((_, idx) => idx !== i);
