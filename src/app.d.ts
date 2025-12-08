@@ -21,20 +21,11 @@ declare module "flowbite-svelte" {
 }
 
 export type Companion = {
-  name: string;
-  owner: string;
-  creation: string;
-  modified: string;
-  modified_by: string;
-  docstatus: number;
-  idx: number;
   companion_name: string;
   gender: string;
   age: number;
-  parent: string;
-  parentfield: string;
-  parenttype: string;
-  doctype: string;
+  phone: string | null;
+  // [key: string]: string | null;
 };
 
 export type DevoteeeProfile = {
@@ -56,6 +47,11 @@ export type Protocol = {
 
   //client
   fee: number;
+};
+
+export type VipDarshanSlot = {
+  slot_name: string;
+  current_capacity: number;
 };
 
 export {};

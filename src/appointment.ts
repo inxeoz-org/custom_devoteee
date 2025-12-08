@@ -104,23 +104,3 @@ export function frappeDateToISO(
   const d = new Date(normalized);
   return isNaN(d.getTime()) ? null : d.toISOString();
 }
-
-export type Companion = {
-  companion_name: string;
-  phone: string;
-  age: number | string;
-  gender: string;
-};
-
-export type Vip_Appointment_Payload = {
-  details: {
-    darshan_date: string;
-    darshan_time: string;
-    darshan_with_protocol: 1;
-    protocol_rank: string;
-    government_authority_letter: string;
-    darshan_type: "Vip Darshan";
-    darshan_companion: Companion[];
-  };
-  save_as_draft: boolean;
-};

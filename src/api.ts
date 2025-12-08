@@ -1,4 +1,5 @@
 import { API_BASE } from "$lib/env.js";
+import type { DevoteeeProfile, Protocol, Companion } from "@src/app.js";
 
 const DEVOTEE = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.devoteee.`;
 const SLOT = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.slot.slot.`;
@@ -213,7 +214,7 @@ export async function createAppointment(
     slot_date: string;
     protocol: string;
     state: string;
-    companion: Array<{ companion_name: string; age: number; gender: string }>;
+    companion: Companion[];
   },
 ) {
   try {
