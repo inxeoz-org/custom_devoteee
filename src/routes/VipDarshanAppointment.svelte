@@ -93,7 +93,7 @@
                 appointmentState = result.workflow_state;
                 toast.message("Appointment created successfully");
             } else {
-                toast.error("Failed to create appointment");
+                toast.error("Failed to create appointment 2");
             }
         } catch (err) {
             console.error(err);

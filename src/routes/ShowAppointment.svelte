@@ -101,22 +101,6 @@
             submitting = false;
         }
     }
-
-    // safe stringify to avoid circular JSON crashes
-    function safeStringify(obj: any, space = 2) {
-        const seen = new WeakSet();
-        return JSON.stringify(
-            obj,
-            function (key, value) {
-                if (typeof value === "object" && value !== null) {
-                    if (seen.has(value)) return "[Circular]";
-                    seen.add(value);
-                }
-                return value;
-            },
-            space,
-        );
-    }
 </script>
 
 <Modal bind:open title="Appointment Details" size="lg" onclose={handleClose}>
@@ -240,7 +224,7 @@
                     size="sm"
                     onclick={() => {
                         navigator.clipboard
-                            .writeText(safeStringify(appointment, 2))
+                            .writeText(JSON.stringify(appointment, null, 2))
                             .then(() => alert("JSON copied to clipboard!"))
                             .catch(() => alert("Failed to copy JSON"));
                     }}
@@ -252,7 +236,7 @@
             {#if showRaw}
                 <pre
                     class="bg-gray-900 text-gray-100 mt-2 p-2 rounded overflow-auto max-h-60 text-sm">
-{safeStringify(appointment, 2)}</pre>
+{JSON.stringify(appointment, null, 2)}</pre>
             {/if}
         </div>
     {:else}
