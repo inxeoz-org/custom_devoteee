@@ -1,8 +1,7 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { getDevoteeProfile, updateProfile } from "@src/api.js";
-    import { auth_token } from "@src/store.js";
-    import { get } from "svelte/store";
+
     import LoadingPage from "@src/routes/LoadingPage.svelte";
     import {
         Card,
@@ -17,7 +16,11 @@
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
     import { dmy_to_frappe_date, frappe_to_dmy_date } from "@src/utils.js";
-    import type { DevoteeeProfile } from "@src/app.js";
+    import type {
+        Companion,
+        DevoteeeProfile,
+        DevoteeeProfileBasic,
+    } from "@src/app.js";
 
     let loading = false;
 
@@ -28,6 +31,7 @@
     let dob = "";
     let location = "";
     let aadhar = "";
+    let companion: Companion[] = [];
 
     let touched = { name: false, gender: false, dob: false };
 
@@ -37,12 +41,13 @@
         e.preventDefault();
         loading = true;
 
-        const info = {
+        const info: DevoteeeProfileBasic = {
             devoteee_name: name.trim(),
             gender,
-            dob: dmy_to_frappe_date(dob),
+            dob: dob,
             location: location.trim(),
             aadhar: aadhar.trim(),
+            companion: companion,
         };
 
         const json = await updateProfile(info);
@@ -57,7 +62,7 @@
         profile = data?.message;
 
         name = profile.devoteee_name;
-        gender = profile.gender;
+        gender = profile.gender.toLowerCase();
         dob = profile.dob;
         location = profile.location;
         aadhar = profile.aadhar;
@@ -149,9 +154,6 @@
                                         on:blur={() => (touched.gender = true)}
                                         class="mt-1"
                                     >
-                                        <option value="" disabled selected
-                                            >Select Gender</option
-                                        >
                                         <option value="female">Female</option>
                                         <option value="male">Male</option>
                                         <option value="non-binary"

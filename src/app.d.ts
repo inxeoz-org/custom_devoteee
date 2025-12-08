@@ -18,9 +18,9 @@ export type Companion = z.infer<typeof CompanionSchema>;
 /* -------------------------------------------
    Devoteee Profile Schema + Type
 -------------------------------------------- */
-export const DevoteeeSchema = z.object({
+
+export const DevoteeeProfileBasicSchema = z.object({
   devoteee_name: z.string().min(1),
-  email: z.string().email(),
   gender: z.string(),
 
   dob: z.string().transform((val) => {
@@ -37,15 +37,19 @@ export const DevoteeeSchema = z.object({
   location: z.string(),
 
   companion: z.array(CompanionSchema),
+});
 
+export type DevoteeeProfileBasic = z.infer<typeof DevoteeeProfileBasicSchema>;
+
+export const DevoteeeProfileFullSchema = DevoteeeProfileBasicSchema.extend({
+  email: z.string().email(),
   phone: z
     .string()
     .transform((v) => v.replace(/\D/g, ""))
     .refine((v) => /^[6-9]\d{9}$/.test(v), "Invalid phone number"),
 });
 
-export type DevoteeeProfile = z.infer<typeof DevoteeeSchema>;
-
+export type DevoteeeProfile = z.infer<typeof DevoteeeProfileFullSchema>;
 /* -------------------------------------------
    Protocol Schema + Type
 -------------------------------------------- */
