@@ -148,20 +148,19 @@
             <div><strong>Type:</strong> {data.appointment_type ?? "—"}</div>
             <div>
                 <strong>Date:</strong>
-                {data.appointment_date}
+                {data.slot_date}
             </div>
 
             <div>
-                <strong>Time:</strong>
-                {data.slot_start_time} to {data.slot_end_time}
+                <strong>Slot</strong>
+                {data.slot}
             </div>
 
-            {#if data.darshan_with_protocol}
+            {#if data.protocol}
                 <div>
-                    <strong>With Protocol:</strong>
-                    {data.darshan_with_protocol ? "Yes" : "No"}
+                    <strong>Protocol:</strong>
+                    {data.protocol}
                 </div>
-                <div><strong>Protocol Rank:</strong> {data.protocol_rank}</div>
             {/if}
 
             {#if data.government_authority_letter}
@@ -189,27 +188,27 @@
 
         <div class="mb-3">
             <h3 class="font-semibold mb-1">Companions</h3>
-            {#if Array.isArray(data.darshan_companion) && data.darshan_companion.length > 0}
+            {#if Array.isArray(data.companion) && data.companion.length > 0}
                 <ul class="divide-y divide-gray-200 border rounded-md">
-                    {#each data.darshan_companion as c}
+                    {#each data.companion as c}
                         <li class="flex justify-between items-center p-2">
                             <div class="w-1/3">
                                 <div class="font-semibold text-gray-800">
                                     {c.companion_name ?? "Unknown"}
                                 </div>
                                 <div class="text-sm text-gray-500">
-                                    {c.companion_gender ?? ""}
+                                    {c.gender ?? ""}
                                 </div>
                             </div>
                             <div class="w-1/6">
                                 <div class="text-gray-800 font-medium">
-                                    Age {c.companion_age ?? "—"}
+                                    Age {c.age ?? "—"}
                                 </div>
                             </div>
                             <div class=" w-1/3">
                                 phone :
                                 <Badge color="green">
-                                    {c.companion_phone ?? "—"}
+                                    {c.phone ?? "—"}
                                 </Badge>
                             </div>
                         </li>
