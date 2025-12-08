@@ -68,3 +68,22 @@ export const VipDarshanSlotSchema = z.object({
 });
 
 export type VipDarshanSlot = z.infer<typeof VipDarshanSlotSchema>;
+
+export const AppointmentBasicSchema = z.object({
+  name: z.string().uuid(),
+  slot_date: z.string().datetime(),
+  slot: z.string(),
+  protocol: z.string(),
+  state: z.string(),
+  group_size: z.number().int().min(1),
+  workflow_state: z.string(),
+});
+
+export type AppointmentBasic = z.infer<typeof AppointmentBasicSchema>;
+
+export const AppointmentFullSchema = AppointmentBasicSchema.extend({
+  escort_person: z.string().uuid().nullable(),
+  companion: z.array(CompanionSchema),
+});
+
+export type AppointmentFull = z.infer<typeof AppointmentFullSchema>;

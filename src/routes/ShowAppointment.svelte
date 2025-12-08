@@ -1,14 +1,16 @@
 <script lang="ts">
     import { onMount, onDestroy, createEventDispatcher, tick } from "svelte";
     import { Button, Modal, Badge } from "flowbite-svelte";
-    import { formatDateTime } from "@src/utils.js";
 
     import { getAppointment, submitAppointment } from "@src/api.js";
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
     import { toast } from "svelte-sonner";
+    import type { AppointmentFull } from "@src/app.js";
 
     let workflow_state = "Demo";
+
+    let appointment: AppointmentFull;
 
     export let appointmentId: string;
 
@@ -17,7 +19,6 @@
     let loading = false;
     let submitting = false;
     let error: string | null = null;
-    let data: any = null;
     let showRaw = false;
     // local modal open — used for Flowbite's bind:open (triggers modal open/close)
     let open = true;
@@ -32,8 +33,8 @@
         try {
             const token = get(auth_token);
             const payload = await getAppointment(token, appointmentId);
-            data = payload?.message ?? payload;
-            workflow_state = data.workflow_state;
+            appointment = payload?.message;
+            workflow_state = appointment.workflow_state;
             console.log(workflow_state);
         } catch (err: any) {
             error = err?.message ?? String(err);
@@ -79,7 +80,7 @@
 
             if (result?.message) {
                 toast.success("Appointment submitted successfully!");
-                // Refresh appointment data to show updated workflow_state
+                // Refresh appointment appointment to show updated workflow_state
                 await fetchAppointment();
             } else {
                 toast.error(
@@ -118,69 +119,47 @@
         <div class="text-center text-gray-500 py-6">Loading appointment…</div>
     {:else if error}
         <div class="p-3 bg-red-50 text-red-600 rounded-md">Error: {error}</div>
-    {:else if data}
+    {:else if appointment}
         <div class="grid grid-cols-2 gap-3 mb-4">
             <div>
-                <strong>Primary Devotee:</strong>
-
-                <Badge color="green">
-                    {data.primary_devoteee_name ?? "—"}
-                </Badge>
-            </div>
-
-            <div>
                 <strong>Appointment ID:</strong>
-                {data.name ?? data.appointment_id ?? "—"}
+                {appointment.name}
             </div>
             <div>
                 <strong>Status:</strong>
-
                 <Badge
-                    color={data.workflow_state === "Approved"
+                    color={appointment.workflow_state === "Approved"
                         ? "green"
-                        : data.workflow_state === "Pending"
+                        : appointment.workflow_state === "Pending"
                           ? "orange"
                           : "red"}
                 >
-                    {data.workflow_state ?? "—"}
+                    {appointment.workflow_state ?? "—"}
                 </Badge>
             </div>
 
             <div>
                 <strong>Date:</strong>
-                {data.slot_date}
+                {appointment.slot_date}
             </div>
 
             <div>
                 <strong>Slot</strong>
-                {data.slot}
+                {appointment.slot}
             </div>
 
-            {#if data.protocol}
+            {#if appointment.protocol}
                 <div>
                     <strong>Protocol:</strong>
-                    {data.protocol}
+                    {appointment.protocol}
                 </div>
             {/if}
 
-            {#if data.government_authority_letter}
-                <div class="col-span-2">
-                    <strong>Authority Letter:</strong>
-                    {data.government_authority_letter}
-                </div>
-            {/if}
-            {#if data.devoteee_name}
-                <div class="col-span-2">
-                    <strong>Devoteee Name:</strong>
-                    {data.devoteee_name}
-                </div>
-            {/if}
-
-            {#if data.group_size}
+            {#if appointment.group_size}
                 <div class="col-span-2">
                     <strong>Group Size:</strong>
                     <Badge color="blue">
-                        {data.group_size ?? "—"}
+                        {appointment.group_size ?? "—"}
                     </Badge>
                 </div>
             {/if}
@@ -188,9 +167,9 @@
 
         <div class="mb-3">
             <h3 class="font-semibold mb-1">Companions</h3>
-            {#if Array.isArray(data.companion) && data.companion.length > 0}
+            {#if Array.isArray(appointment.companion) && appointment.companion.length > 0}
                 <ul class="divide-y divide-gray-200 border rounded-md">
-                    {#each data.companion as c}
+                    {#each appointment.companion as c}
                         <li class="flex justify-between items-center p-2">
                             <div class="w-1/3">
                                 <div class="font-semibold text-gray-800">
@@ -247,7 +226,7 @@
                     size="sm"
                     onclick={() => {
                         navigator.clipboard
-                            .writeText(safeStringify(data, 2))
+                            .writeText(safeStringify(appointment, 2))
                             .then(() => alert("JSON copied to clipboard!"))
                             .catch(() => alert("Failed to copy JSON"));
                     }}
@@ -259,10 +238,12 @@
             {#if showRaw}
                 <pre
                     class="bg-gray-900 text-gray-100 mt-2 p-2 rounded overflow-auto max-h-60 text-sm">
-{safeStringify(data, 2)}</pre>
+{safeStringify(appointment, 2)}</pre>
             {/if}
         </div>
     {:else}
-        <div class="text-center text-gray-500 py-6">No data available.</div>
+        <div class="text-center text-gray-500 py-6">
+            No appointment available.
+        </div>
     {/if}
 </Modal>

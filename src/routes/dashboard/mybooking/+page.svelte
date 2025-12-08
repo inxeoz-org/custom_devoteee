@@ -6,10 +6,10 @@
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
     import type { Booking, Status } from "@src/appointment.js";
-
+    import type { AppointmentBasic } from "@src/app.js";
     import { Card, Button, Badge } from "flowbite-svelte";
 
-    let appointments: [] = [];
+    let appointments: AppointmentBasic[] = [];
     export let limitStart = 0;
     export let pageLength = 10;
 
@@ -21,7 +21,7 @@
     let error: string | null = null;
 
     let show = false;
-    let selectedId: string | null = null;
+    let selectedAppointmentId: string | null = null;
 
     function badgeClass(workflowState: Status | string) {
         switch (workflowState) {
@@ -51,8 +51,8 @@
 
     onMount(() => FetchBookings());
 
-    function openModal(details: Booking) {
-        selectedId = details.name;
+    function openModal(appointment_id: string) {
+        selectedAppointmentId = appointment_id;
         show = true;
     }
     function handleModalClose() {
@@ -98,7 +98,7 @@
                         <Button
                             class="flex items-start justify-between p-4 rounded-xl border bg-white hover:shadow-sm"
                             color="light"
-                            onclick={() => openModal(a)}
+                            onclick={() => openModal(a.name)}
                             aria-label={`Open booking ${a.name}`}
                         >
                             <div class="text-left">
@@ -128,6 +128,9 @@
     </div>
 </div>
 
-{#if show && selectedId}
-    <ShowAppointment appointmentId={selectedId} on:close={handleModalClose} />
+{#if show && selectedAppointmentId}
+    <ShowAppointment
+        appointmentId={selectedAppointmentId}
+        on:close={handleModalClose}
+    />
 {/if}

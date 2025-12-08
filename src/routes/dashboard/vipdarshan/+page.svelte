@@ -11,7 +11,6 @@
     import { get } from "svelte/store";
     import { Badge } from "flowbite-svelte";
     import { ArrowUpRightFromSquareOutline } from "flowbite-svelte-icons";
-    import { slotTimeTo12hr } from "@src/utils.js";
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
     import type {
