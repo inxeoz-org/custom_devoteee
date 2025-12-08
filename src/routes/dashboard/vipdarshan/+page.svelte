@@ -71,15 +71,6 @@
         }
     }
 
-    function slotClass(s: VipDarshanSlot) {
-        const isSelected = selectedSlotName === s.slot_name;
-        return `
-            border rounded-lg transition
-            ${isSelected ? "border-blue-700 bg-blue-100 ring-2 ring-blue-300" : "border-gray-300 hover:border-blue-500 hover:bg-blue-50"}
-            ${s.seats === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-        `;
-    }
-
     async function fetch_slot_info(slot_date: string) {
         const data = await getVipDarshanSlots(slot_date);
         slots = data?.message || [];
@@ -278,7 +269,7 @@
                     {#if slots?.length > 0}
                         {#each slots as s (s.slot_name)}
                             <button
-                                class={`flex flex-col items-center justify-center gap-1 min-h-[64px] p-3 bg-white ${slotClass(s)}`}
+                                class={`flex flex-col items-center justify-center gap-1 min-h-[64px] p-3 ${selectedSlotName === s.slot_name ? 'bg-green-500 text-white' : 'bg-white'} `}
                                 on:click={() => select_slot(s.slot_name)}
                                 aria-pressed={selectedSlotName === s.slot_name}
                             >
