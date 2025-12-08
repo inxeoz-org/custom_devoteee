@@ -45,8 +45,7 @@
             aadhar: aadhar.trim(),
         };
 
-        const token = get(auth_token);
-        const json = await updateProfile(token, info);
+        const json = await updateProfile(info);
 
         toast(json?.message || "Profile saved.");
         submitted = true;
@@ -54,8 +53,7 @@
     }
 
     async function reset_profile() {
-        const token = get(auth_token);
-        const data = await getDevoteeProfile(token);
+        const data = await getDevoteeProfile();
         profile = data?.message;
 
         name = profile.devoteee_name;

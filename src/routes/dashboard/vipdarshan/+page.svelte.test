@@ -86,8 +86,7 @@
         loading = true;
         const details = getAppointmentDetails();
         try {
-            const token = get(auth_token);
-            const result = await createAppointment(token, details);
+            const result = await createAppointment(details);
             if (result && result.message) {
                 appointment_id = result.message.name; // assuming id is name
                 appointmentState = 'draft';
@@ -107,8 +106,7 @@
         loading = true;
         const details = getAppointmentDetails();
         try {
-            const token = get(auth_token);
-            await updateAppointment(token, appointment_id, details);
+            await updateAppointment(appointment_id, details);
             toast.message("Appointment saved successfully");
         } catch (err) {
             console.error(err);
@@ -121,8 +119,7 @@
     async function submitAppointmentFunc() {
         loading = true;
         try {
-            const token = get(auth_token);
-            await submitAppointment(token, appointment_id);
+            await submitAppointment(appointment_id);
             appointmentState = 'pending';
             toast.message("Appointment submitted successfully");
         } catch (err) {
@@ -137,10 +134,7 @@
         const token = get(auth_token);
 
         if (appointment_id) {
-            const appointment_data = await getAppointment(
-                token,
-                appointment_id,
-            );
+            const appointment_data = await getAppointment(appointment_id);
             const appointment: AppointmentFull = appointment_data?.message;
             slot_date = appointment.slot_date;
             selectedSlotName = appointment.slot;
@@ -149,8 +143,8 @@
             companion = appointment.companion;
             appointmentState = appointment.state;
         } else {
-            const profile_data = await getDevoteeProfile(token);
-            const protocols_data = await getProtocolList(token);
+            const profile_data = await getDevoteeProfile();
+            const protocols_data = await getProtocolList("");
             protocol_list = protocols_data?.message;
             profile = profile_data?.message;
             companion = profile?.companion;

@@ -16,8 +16,7 @@
 
     onMount(async () => {
         try {
-            const token = get(auth_token);
-            const data = await getDevoteeProfile(token);
+            const data = await getDevoteeProfile();
             profile = data?.message;
             console.log(profile);
         } catch (e) {

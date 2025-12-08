@@ -29,10 +29,7 @@
         const token = get(auth_token);
 
         if (appointment_id) {
-            const appointment_data = await getAppointment(
-                token,
-                appointment_id,
-            );
+            const appointment_data = await getAppointment(appointment_id);
             appointment = appointment_data?.message;
         }
     }

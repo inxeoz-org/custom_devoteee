@@ -36,8 +36,7 @@
         loading = true;
         error = null;
         try {
-            const token = get(auth_token);
-            const payload = await getAppointment(token, appointmentId);
+            const payload = await getAppointment(appointmentId);
             appointment = payload?.message;
             workflow_state = appointment.workflow_state;
             console.log(workflow_state);
@@ -80,8 +79,7 @@
 
         submitting = true;
         try {
-            const token = get(auth_token);
-            const result = await submitAppointment(token, appointmentId);
+            const result = await submitAppointment(appointmentId);
 
             if (result?.message) {
                 toast.success("Appointment submitted successfully!");

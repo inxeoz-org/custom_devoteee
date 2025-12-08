@@ -30,8 +30,7 @@
         loading = true;
         error = null;
 
-        const token = get(auth_token);
-        const data = await getAppointmentList(token, {
+        const data = await getAppointmentList({
             limitStart,
             pageLength,
         });

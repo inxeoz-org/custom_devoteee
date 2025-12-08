@@ -85,8 +85,7 @@
         loading = true;
         const details = getAppointmentDetails();
         try {
-            const token = get(auth_token);
-            const result_data = await createAppointment(token, details);
+            const result_data = await createAppointment(details);
             const result: AppointmentFull = result_data?.meeage;
             if (result) {
                 appointment_id = result.name; // assuming id is name
@@ -108,8 +107,7 @@
         loading = true;
         const details = getAppointmentDetails();
         try {
-            const token = get(auth_token);
-            await updateAppointment(token, appointment_id, details);
+            await updateAppointment(appointment_id, details);
             await resetForm();
             toast.message("Appointment saved successfully");
         } catch (err) {
@@ -124,8 +122,7 @@
         if (!appointment_id) return;
         loading = true;
         try {
-            const token = get(auth_token);
-            await submitAppointment(token, appointment_id);
+            await submitAppointment(appointment_id);
             await resetForm();
             // appointmentState = result_data?.message.workflow_state;
             toast.message("Appointment submitted successfully");
@@ -141,10 +138,7 @@
         const token = get(auth_token);
 
         if (appointment_id) {
-            const appointment_data = await getAppointment(
-                token,
-                appointment_id,
-            );
+            const appointment_data = await getAppointment(appointment_id);
             const appointment: AppointmentFull = appointment_data?.message;
             console.log(appointment);
             slot_date = appointment.slot_date;
@@ -156,7 +150,7 @@
             devoteee_name = appointment.devoteee_name;
             await fetch_slot_info(slot_date);
         } else {
-            const profile_data = await getDevoteeProfile(token);
+            const profile_data = await getDevoteeProfile();
             profile = profile_data?.message;
             companion = profile?.companion;
         }

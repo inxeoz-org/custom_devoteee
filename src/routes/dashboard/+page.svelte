@@ -56,8 +56,7 @@
 
     onMount(async () => {
         try {
-            const token = get(auth_token);
-            const data = await getDevoteeProfile(token);
+            const data = await getDevoteeProfile();
             const devoteee_details = data?.message;
 
             if (devoteee_details) {

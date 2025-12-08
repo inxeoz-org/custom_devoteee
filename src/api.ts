@@ -1,4 +1,6 @@
 import { API_BASE } from "$lib/env.js";
+
+import { get } from "svelte/store";
 import type { DevoteeeProfile, Protocol, Companion } from "@src/app.js";
 
 const DEVOTEE = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.devoteee.`;
@@ -41,13 +43,13 @@ export async function verifyOtpLogin(phone: string, otp: string) {
 }
 
 // Profile APIs
-export async function getDevoteeProfile(token: string) {
+export async function getDevoteeProfile() {
   try {
     const res = await fetch(DEVOTEE + "profile.profile", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
     });
     return await res.json();
@@ -57,13 +59,13 @@ export async function getDevoteeProfile(token: string) {
   }
 }
 
-export async function updateProfile(token: string, profileData: any) {
+export async function updateProfile(profileData: any) {
   try {
     const res = await fetch(DEVOTEE + "profile.update_profile", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify(profileData),
     });
@@ -75,13 +77,13 @@ export async function updateProfile(token: string, profileData: any) {
 }
 
 // Phone Update APIs
-export async function requestUpdatePhone(token: string, newPhone: string) {
+export async function requestUpdatePhone(newPhone: string) {
   try {
     const res = await fetch(DEVOTEE + "profile.update_cred", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify({ new_phone: newPhone }),
     });
@@ -92,17 +94,13 @@ export async function requestUpdatePhone(token: string, newPhone: string) {
   }
 }
 
-export async function updatePhone(
-  token: string,
-  newPhone: string,
-  otpPhone: string,
-) {
+export async function updatePhone(newPhone: string, otpPhone: string) {
   try {
     const res = await fetch(DEVOTEE + "profile.update_cred", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify({ new_phone: newPhone, otp_phone: otpPhone }),
     });
@@ -114,13 +112,13 @@ export async function updatePhone(
 }
 
 // Email Update APIs
-export async function requestUpdateEmail(token: string, newEmail: string) {
+export async function requestUpdateEmail(newEmail: string) {
   try {
     const res = await fetch(DEVOTEE + "profile.update_cred", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify({ new_email: newEmail }),
     });
@@ -131,17 +129,13 @@ export async function requestUpdateEmail(token: string, newEmail: string) {
   }
 }
 
-export async function updateEmail(
-  token: string,
-  newEmail: string,
-  otpEmail: string,
-) {
+export async function updateEmail(newEmail: string, otpEmail: string) {
   try {
     const res = await fetch(DEVOTEE + "profile.update_cred", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify({ new_email: newEmail, otp_email: otpEmail }),
     });
@@ -153,13 +147,13 @@ export async function updateEmail(
 }
 
 // Companion APIs
-export async function getDefaultCompanion(token: string) {
+export async function getDefaultCompanion() {
   try {
     const res = await fetch(DEVOTEE + "profile.companion", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
     });
     return await res.json();
@@ -169,16 +163,17 @@ export async function getDefaultCompanion(token: string) {
   }
 }
 
-export async function addCompanion(
-  token: string,
-  companionData: { companion_name: string; gender: string; age: number },
-) {
+export async function addCompanion(companionData: {
+  companion_name: string;
+  gender: string;
+  age: number;
+}) {
   try {
     const res = await fetch(DEVOTEE + "profile.add_companion", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify(companionData),
     });
@@ -189,13 +184,13 @@ export async function addCompanion(
   }
 }
 
-export async function removeCompanion(token: string, companionId: string) {
+export async function removeCompanion(companionId: string) {
   try {
     const res = await fetch(DEVOTEE + "profile.remove_companion", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify({ companion_id: companionId }),
     });
@@ -207,23 +202,20 @@ export async function removeCompanion(token: string, companionId: string) {
 }
 
 // Appointment APIs
-export async function createAppointment(
-  token: string,
-  appointmentData: {
-    slot: string;
-    slot_date: string;
-    protocol: string;
-    state: string;
-    companion: Companion[];
-  },
-) {
+export async function createAppointment(appointmentData: {
+  slot: string;
+  slot_date: string;
+  protocol: string;
+  state: string;
+  companion: Companion[];
+}) {
   try {
     console.log("createAppointment:", appointmentData);
     const res = await fetch(DEVOTEE + "appointment.create_appointment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify(appointmentData),
     });
@@ -236,7 +228,6 @@ export async function createAppointment(
 
 // Appointment APIs
 export async function updateAppointment(
-  token: string,
   appointment_id: string,
   appointmentData: {
     slot: string;
@@ -252,7 +243,7 @@ export async function updateAppointment(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify({ appointment_id, ...appointmentData }),
     });
@@ -262,13 +253,13 @@ export async function updateAppointment(
     return null;
   }
 }
-export async function getAppointment(token: string, appointmentId: string) {
+export async function getAppointment(appointmentId: string) {
   try {
     const res = await fetch(DEVOTEE + "appointment.get_appointment_details", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify({ appointment_id: appointmentId }),
     });
@@ -279,13 +270,13 @@ export async function getAppointment(token: string, appointmentId: string) {
   }
 }
 
-export async function submitAppointment(token: string, appointmentId: string) {
+export async function submitAppointment(appointmentId: string) {
   try {
     const res = await fetch(DEVOTEE + "appointment.submit_appointment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify({ appointment_id: appointmentId }),
     });
@@ -297,7 +288,6 @@ export async function submitAppointment(token: string, appointmentId: string) {
 }
 
 export async function getAppointmentList(
-  token: string,
   params?: {
     limitStart?: number;
     pageLength?: number;
@@ -310,7 +300,7 @@ export async function getAppointmentList(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify(params || {}),
     });
@@ -322,13 +312,13 @@ export async function getAppointmentList(
 }
 
 // Booking Slot APIs
-export async function getBookingSlotInfo(token: string, slotDate: string) {
+export async function getBookingSlotInfo(slotDate: string) {
   try {
     const res = await fetch(SLOT + "get_slot_occupancy_info", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: get(auth_token),
       },
       body: JSON.stringify({ slot_date: slotDate }),
     });
