@@ -154,6 +154,7 @@
             companion = appointment.companion;
             appointmentState = appointment.workflow_state;
             devoteee_name = appointment.devoteee_name;
+            await fetch_slot_info(slot_date);
         } else {
             const profile_data = await getDevoteeProfile(token);
             profile = profile_data?.message;
