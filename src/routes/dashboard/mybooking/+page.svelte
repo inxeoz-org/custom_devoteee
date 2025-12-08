@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import ShowAppointment from "@src/routes/ShowAppointment.svelte";
+    import VipDarshanAppointment from "@src/routes/VipDarshanAppointment.svelte";
     import { getAppointmentList } from "@src/api.js";
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
@@ -13,15 +14,16 @@
     export let limitStart = 0;
     export let pageLength = 10;
 
-    export let heading = "My Bookings";
-    export let subtitle = "View your darshan bookings.";
-    export let sectionTitle = "My Bookings";
+    export let heading = "Vip Darshan Bookings";
+    export let subtitle = "View your VIP darshan bookings.";
+    export let sectionTitle = "Vip Darshan Bookings";
 
     let loading = false;
     let error: string | null = null;
 
     let show = false;
     let selectedAppointmentId: string | null = null;
+    let showCreate = false;
 
     function badgeClass(workflowState: Status | string) {
         switch (workflowState) {
@@ -70,6 +72,12 @@
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-bold text-slate-700">{sectionTitle}</h2>
             <div class="flex items-center gap-3">
+                <Button
+                    color="blue"
+                    onclick={() => showCreate = true}
+                >
+                    Create Vip Darshan Appointment
+                </Button>
                 <Button
                     color="light"
                     onclick={FetchBookings}
@@ -134,3 +142,5 @@
         on:close={handleModalClose}
     />
 {/if}
+
+<VipDarshanAppointment bind:open={showCreate} />
