@@ -218,6 +218,7 @@ export async function createAppointment(
   },
 ) {
   try {
+    console.log("createAppointment:", appointmentData);
     const res = await fetch(DEVOTEE + "appointment.create_appointment", {
       method: "POST",
       headers: {

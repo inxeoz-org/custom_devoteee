@@ -16,10 +16,12 @@
     } from "flowbite-svelte";
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
+    import { dmy_to_frappe_date, frappe_to_dmy_date } from "@src/utils.js";
+    import type { DevoteeeProfile } from "@src/app.js";
 
     let loading = false;
 
-    let profle_data: any = null;
+    let profile: DevoteeeProfile;
 
     let name = "";
     let gender = "";
@@ -38,7 +40,7 @@
         const info = {
             devoteee_name: name.trim(),
             gender,
-            dob,
+            dob: dmy_to_frappe_date(dob),
             location: location.trim(),
             aadhar: aadhar.trim(),
         };
@@ -54,13 +56,13 @@
     async function reset_profile() {
         const token = get(auth_token);
         const data = await getDevoteeProfile(token);
-        profle_data = data?.message;
+        profile = data?.message;
 
-        name = profle_data?.devoteee_name ?? "";
-        gender = profle_data?.gender ?? "";
-        dob = profle_data?.dob ?? "";
-        location = profle_data?.location ?? "";
-        aadhar = profle_data?.aadhar ?? "";
+        name = profile.devoteee_name;
+        gender = profile.gender;
+        dob = profile.dob;
+        location = profile.location;
+        aadhar = profile.aadhar;
     }
 
     onMount(async () => {
@@ -82,7 +84,7 @@
                             size="xl"
                             stacked={false}
                             rounded={true}
-                            src={profle_data?.avatar || undefined}
+                            src={profile?.avatar || undefined}
                             alt="Profile avatar"
                         />
                     </div>
@@ -109,7 +111,7 @@
                         <Avatar
                             size="2xl"
                             rounded={true}
-                            src={profle_data?.avatar || undefined}
+                            src={profile?.avatar || undefined}
                             alt="User avatar"
                         />
                         <h2 class="mt-4 text-xl font-semibold">
