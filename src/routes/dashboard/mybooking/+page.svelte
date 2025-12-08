@@ -23,8 +23,8 @@
     let show = false;
     let selectedId: string | null = null;
 
-    function badgeClass(status: Status | string) {
-        switch (status) {
+    function badgeClass(workflowState: Status | string) {
+        switch (workflowState) {
             case "Approved":
                 return "green";
             case "Pending":

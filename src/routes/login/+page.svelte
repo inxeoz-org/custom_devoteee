@@ -27,6 +27,7 @@
 
         if (result?.message) {
             otpSent = true;
+            console.log(result?.message);
             toast.success("OTP sent to your phone");
         } else {
             toast.error("Failed to send OTP: " + JSON.stringify(result));

@@ -3,9 +3,10 @@
     import { Button, Modal, Badge } from "flowbite-svelte";
     import { formatDateTime } from "@src/utils.js";
 
-    import { getAppointment } from "@src/api.js";
+    import { getAppointment, submitAppointment } from "@src/api.js";
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
+    import { toast } from "svelte-sonner";
 
     let workflow_state = "Demo";
 
@@ -14,6 +15,7 @@
     const dispatch = createEventDispatcher();
 
     let loading = false;
+    let submitting = false;
     let error: string | null = null;
     let data: any = null;
     let showRaw = false;
@@ -32,6 +34,7 @@
             const payload = await getAppointment(token, appointmentId);
             data = payload?.message ?? payload;
             workflow_state = data.workflow_state;
+            console.log(workflow_state);
         } catch (err: any) {
             error = err?.message ?? String(err);
         } finally {
@@ -65,6 +68,33 @@
     onDestroy(() => {
         window.removeEventListener("keydown", onKeydown);
     });
+
+    async function handleSubmitAppointment() {
+        if (!appointmentId) return;
+
+        submitting = true;
+        try {
+            const token = get(auth_token);
+            const result = await submitAppointment(token, appointmentId);
+
+            if (result?.message) {
+                toast.success("Appointment submitted successfully!");
+                // Refresh appointment data to show updated workflow_state
+                await fetchAppointment();
+            } else {
+                toast.error(
+                    "Failed to submit appointment: " + JSON.stringify(result),
+                );
+            }
+        } catch (err: any) {
+            toast.error(
+                "Error submitting appointment: " +
+                    (err?.message || String(err)),
+            );
+        } finally {
+            submitting = false;
+        }
+    }
 
     // safe stringify to avoid circular JSON crashes
     function safeStringify(obj: any, space = 2) {
@@ -112,7 +142,7 @@
                           ? "orange"
                           : "red"}
                 >
-                    {data.workflow_state ?? data.status ?? "—"}
+                    {data.workflow_state ?? "—"}
                 </Badge>
             </div>
             <div><strong>Type:</strong> {data.appointment_type ?? "—"}</div>
@@ -151,7 +181,7 @@
                 <div class="col-span-2">
                     <strong>Group Size:</strong>
                     <Badge color="blue">
-                        {data.group_size ?? data.status ?? "—"}
+                        {data.group_size ?? "—"}
                     </Badge>
                 </div>
             {/if}
@@ -193,7 +223,18 @@
         </div>
 
         <div>
-            <div>
+            <div class="flex flex-wrap gap-2 mb-4">
+                {#if workflow_state === "Draft"}
+                    <Button
+                        color="blue"
+                        size="sm"
+                        disabled={submitting}
+                        onclick={handleSubmitAppointment}
+                    >
+                        {#if submitting}Submitting...{:else}Submit Appointment{/if}
+                    </Button>
+                {/if}
+
                 <Button
                     color="light"
                     size="sm"
