@@ -6,10 +6,13 @@
         getBookingSlotInfo,
         getProtocolList,
         getVipDarshanSlots,
+        getAppointment,
+        updateAppointment,
+        submitAppointment,
     } from "@src/api.js";
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
-    import { Badge } from "flowbite-svelte";
+    import { Badge, Modal } from "flowbite-svelte";
     import { ArrowUpRightFromSquareOutline } from "flowbite-svelte-icons";
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
@@ -18,7 +21,10 @@
         Protocol,
         Companion,
         VipDarshanSlot,
+        AppointmentFull,
     } from "@src/app.js";
+
+    export let appointment_id: string | null = null;
 
     export let title = "Book VIP Darshan (Protocol)";
     export let subtitle = "Select your protocol category to proceed.";
@@ -36,7 +42,7 @@
     let selectedSlotName = "";
     let selectedState = "";
     let loading = false;
-    let bookingSuccess = false;
+    let appointmentState = "";
 
     function addCompanion() {
         const c: Companion = {
@@ -50,26 +56,7 @@
     function removeCompanion(i: number) {
         companion = companion.filter((_, idx) => idx !== i);
     }
-    async function submitBooking() {
-        loading = true;
-        const details = {
-            slot_date: slot_date,
-            slot: selectedSlotName,
-            protocol: selectedProtocol,
-            state: selectedState,
-            companion: companion,
-        };
-        try {
-            const token = get(auth_token);
-            await createAppointment(token, details);
-            bookingSuccess = true;
-        } catch (err) {
-            console.error(err);
-            alert("Failed to submit. Check console.");
-        } finally {
-            loading = false;
-        }
-    }
+
 
     async function fetch_slot_info(slot_date: string) {
         const data = await getVipDarshanSlots(slot_date);
@@ -79,28 +66,100 @@
         selectedSlotName = slot_name;
         toast.message("Selected " + selectedSlotName);
     }
+
+    function getAppointmentDetails() {
+        return {
+            slot_date: slot_date,
+            slot: selectedSlotName,
+            protocol: selectedProtocol,
+            state: selectedState,
+            companion: companion,
+        };
+    }
+
+    async function createAppointmentFunc() {
+        loading = true;
+        const details = getAppointmentDetails();
+        try {
+            const token = get(auth_token);
+            const result = await createAppointment(token, details);
+            if (result && result.message) {
+                appointment_id = result.message.name; // assuming id is name
+                appointmentState = 'draft';
+                toast.message("Appointment created successfully");
+            } else {
+                toast.error("Failed to create appointment");
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to create appointment");
+        } finally {
+            loading = false;
+        }
+    }
+
+    async function saveAppointment() {
+        loading = true;
+        const details = getAppointmentDetails();
+        try {
+            const token = get(auth_token);
+            await updateAppointment(token, appointment_id, details);
+            toast.message("Appointment saved successfully");
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to save appointment");
+        } finally {
+            loading = false;
+        }
+    }
+
+    async function submitAppointmentFunc() {
+        loading = true;
+        try {
+            const token = get(auth_token);
+            await submitAppointment(token, appointment_id);
+            appointmentState = 'pending';
+            toast.message("Appointment submitted successfully");
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to submit appointment");
+        } finally {
+            loading = false;
+        }
+    }
     onMount(async () => {
         loading = true;
         const token = get(auth_token);
-        const profile_data = await getDevoteeProfile(token);
-        const protocols_data = await getProtocolList(token);
-        protocol_list = protocols_data?.message;
-        profile = profile_data?.message;
-        companion = profile?.companion;
 
-        console.log("Profile:", profile);
-        console.log("Protocols:", protocol_list);
+        if (appointment_id) {
+            const appointment_data = await getAppointment(
+                token,
+                appointment_id,
+            );
+            const appointment: AppointmentFull = appointment_data?.message;
+            slot_date = appointment.slot_date;
+            selectedSlotName = appointment.slot;
+            selectedProtocol = appointment.protocol;
+            selectedState = appointment.state;
+            companion = appointment.companion;
+            appointmentState = appointment.state;
+        } else {
+            const profile_data = await getDevoteeProfile(token);
+            const protocols_data = await getProtocolList(token);
+            protocol_list = protocols_data?.message;
+            profile = profile_data?.message;
+            companion = profile?.companion;
+        }
+
         loading = false;
     });
 </script>
 
-{#if loading}
-    <h1>Loading</h1>
-{:else}
-    <div class="min-h-screen bg-gray-100 grid place-items-center px-4 py-6">
-        <div
-            class="w-full max-w-xl sm:max-w-2xl lg:max-w-3xl bg-white rounded-xl shadow-lg p-5 sm:p-6 overflow-auto"
-        >
+    {#if loading}
+        <h1>Loading</h1>
+    {:else}
+        <Modal open size="xl" class="w-full">
+            <div class="bg-white rounded-xl shadow-lg p-5 sm:p-6 overflow-auto">
             <h1
                 class="text-xl sm:text-2xl font-semibold text-gray-800 text-center mb-1"
             >
@@ -132,8 +191,6 @@
                     </a>
                 </div>
             {/if}
-
-            {#if !bookingSuccess}
                 <label class="block text-sm font-semibold text-gray-700 mb-1"
                     >Primary Devotee</label
                 >
@@ -291,34 +348,32 @@
                     {/if}
                 </div>
 
-                <button
-                    class="w-full h-12 mt-3 rounded-lg font-bold bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-60"
-                    on:click={submitBooking}
-                    disabled={loading}
-                >
-                    {#if loading}Processing...{:else}Apply For Appointment{/if}
-                </button>
-            {:else}
-                <div class="text-center mt-6">
-                    <Badge color="green" class="text-base"
-                        >Appointment applied.</Badge
+                {#if !appointment_id}
+                    <button
+                        class="w-full h-12 mt-3 rounded-lg font-bold bg-green-600 text-white hover:bg-green-700 transition disabled:opacity-60"
+                        on:click={createAppointmentFunc}
+                        disabled={loading}
                     >
-                    <div
-                        class="flex flex-col sm:flex-row gap-3 mt-4 justify-center"
-                    >
+                        {#if loading}Processing...{:else}Create Appointment{/if}
+                    </button>
+                {:else if appointmentState === 'draft'}
+                    <div class="flex gap-3 mt-3">
                         <button
-                            class="bg-green-600 text-white rounded-lg px-4 py-2 font-semibold"
-                            on:click={() => goto("/dashboard/mybooking")}
-                            >See your bookings</button
+                            class="flex-1 h-12 rounded-lg font-bold bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-60"
+                            on:click={saveAppointment}
+                            disabled={loading}
                         >
+                            {#if loading}Processing...{:else}Save{/if}
+                        </button>
                         <button
-                            class="bg-blue-50 text-blue-700 border border-blue-200 rounded-lg px-4 py-2 font-semibold"
-                            on:click={() => goto("/dashboard")}
-                            >Back to Dashboard</button
+                            class="flex-1 h-12 rounded-lg font-bold bg-green-600 text-white hover:bg-green-700 transition disabled:opacity-60"
+                            on:click={submitAppointmentFunc}
+                            disabled={loading}
                         >
+                            {#if loading}Processing...{:else}Submit{/if}
+                        </button>
                     </div>
-                </div>
-            {/if}
-        </div>
-    </div>
+                {/if}
+            </div>
+        </Modal>
 {/if}

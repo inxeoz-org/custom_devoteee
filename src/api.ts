@@ -234,6 +234,34 @@ export async function createAppointment(
   }
 }
 
+// Appointment APIs
+export async function updateAppointment(
+  token: string,
+  appointment_id: string,
+  appointmentData: {
+    slot: string;
+    slot_date: string;
+    protocol: string;
+    state: string;
+    companion: Companion[];
+  },
+) {
+  try {
+    console.log("updateAppointment:", appointmentData);
+    const res = await fetch(DEVOTEE + "appointment.update_appointment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({ appointment_id, ...appointmentData }),
+    });
+    return await res.json();
+  } catch (err: any) {
+    console.error("updateAppointment:", err);
+    return null;
+  }
+}
 export async function getAppointment(token: string, appointmentId: string) {
   try {
     const res = await fetch(DEVOTEE + "appointment.get_appointment_details", {
