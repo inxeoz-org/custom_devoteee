@@ -1,6 +1,11 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { createAppointment, getDevoteeProfile, getBookingSlotInfo } from "@src/api.js";
+    import {
+        createAppointment,
+        getDevoteeProfile,
+        getBookingSlotInfo,
+        getProtocolList,
+    } from "@src/api.js";
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
     import { Badge } from "flowbite-svelte";
@@ -8,34 +13,19 @@
     import { slotTimeTo12hr } from "@src/utils.js";
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
+    import type { DevoteeeProfile, Protocol } from "@src/app.js";
+    import type { Companion } from "@src/appointment.js";
 
     export let title = "Book VIP Darshan (Protocol)";
     export let subtitle = "Select your protocol category to proceed.";
     export let sectionTitle = "Book VIP Darshan";
 
-    let profile_data: any = null;
-    let devoteee_name = "";
-    export let protocols = [
-        {
-            value: "state-guest-class-1",
-            label: "State Guest - Class I",
-            fee: 500,
-        },
-        {
-            value: "state-guest-class-2",
-            label: "State Guest - Class II",
-            fee: 500,
-        },
-        { value: "mp-govt-official", label: "MP Govt. Official", fee: 500 },
-    ];
+    let profile: DevoteeeProfile;
+    let protocol_list: Protocol[];
+    let companion: Companion[] = [];
 
     let selectedProtocolValue = "";
-    let companions: {
-        name: string;
-        phone: string;
-        age: number;
-        gender: string;
-    }[] = [];
+
     let appointment_date = "";
     let selectedSlotName = "";
     let selected_slot_start_time = "";
@@ -53,18 +43,14 @@
     }
     let slots_data: Slot[] = [];
 
-    $: feePerPerson =
-        protocols.find((p) => p.value === selectedProtocolValue)?.fee ?? 0;
-    $: total = feePerPerson * (1 + companions.length);
-
     function addCompanion() {
-        companions = [
-            ...companions,
-            { name: "", phone: "", age: 0, gender: "male" },
+        companion = [
+            ...companion,
+            { companion_name: "", phone: "", age: 0, gender: "male" },
         ];
     }
     function removeCompanion(i: number) {
-        companions = companions.filter((_, idx) => idx !== i);
+        companion = companion.filter((_, idx) => idx !== i);
     }
     async function submitBooking() {
         loading = true;
@@ -76,8 +62,8 @@
             darshan_with_protocol: 1,
             protocol_rank: selectedProtocolValue,
             government_authority_letter: authorityLetterFile?.name || "",
-            darshan_companion: companions.map((c) => ({
-                companion_name: c.name,
+            companion: companion.map((c) => ({
+                companion_name: c.companion_name,
                 companion_phone: c.phone,
                 companion_age: c.age,
                 companion_gender: c.gender,
@@ -132,9 +118,13 @@
     }
     onMount(async () => {
         const token = get(auth_token);
-        const data = await getDevoteeProfile(token);
-        profile_data = data?.message?.profile;
-        devoteee_name = profile_data?.devoteee_name;
+        const profile_data = await getDevoteeProfile(token);
+        const protocols_data = await getProtocolList(token);
+        protocol_list = protocols_data?.message;
+        profile = profile_data?.message;
+
+        console.log("Profile:", profile);
+        console.log("Protocols:", protocol_list);
     });
 </script>
 
@@ -155,7 +145,7 @@
             <h2 class="text-lg font-semibold text-gray-900">{sectionTitle}</h2>
         </div>
 
-        {#if !(devoteee_name?.length > 0)}
+        {#if !(profile.devoteee_name.length > 0 || profile.phone.length > 0)}
             <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 mb-4">
                 <a href="/" class="block mb-2 text-gray-500 font-semibold"
                     >Complete profile required !!!</a
@@ -175,10 +165,12 @@
                 >Primary Devotee</label
             >
             <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 mb-3">
-                {devoteee_name}
+                {profile.devoteee_name}
             </div>
 
-            <label for="protocol-select" class="block text-sm font-semibold text-gray-700 mt-2 mb-1"
+            <label
+                for="protocol-select"
+                class="block text-sm font-semibold text-gray-700 mt-2 mb-1"
                 >Protocol</label
             >
             <select
@@ -187,16 +179,16 @@
                 bind:value={selectedProtocolValue}
             >
                 <option value="" disabled selected>Select Protocol</option>
-                {#each protocols as p}
-                    <option value={p.value}>{p.label}</option>
+                {#each protocol_list as p}
+                    <option value={p.name}>{p.name}</option>
                 {/each}
             </select>
 
             <label class="block text-sm font-semibold text-gray-700 mt-4 mb-2"
-                >Companions ({companions.length})</label
+                >Companions ({companion.length})</label
             >
             <div class="space-y-3">
-                {#each companions as c, i}
+                {#each companion as c, i}
                     <div
                         class="grid gap-2 md:gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 items-end"
                     >
@@ -207,7 +199,7 @@
                                 class="w-full border border-gray-300 rounded-lg p-2"
                                 type="text"
                                 placeholder="Full name"
-                                bind:value={companions[i].name}
+                                bind:value={companion[i].companion_name}
                             />
                         </div>
 
@@ -218,7 +210,7 @@
                                 class="w-full border border-gray-300 rounded-lg p-2"
                                 type="tel"
                                 placeholder="Phone"
-                                bind:value={companions[i].phone}
+                                bind:value={companion[i].phone}
                             />
                         </div>
 
@@ -229,7 +221,7 @@
                                 class="w-full border border-gray-300 rounded-lg p-2"
                                 type="number"
                                 placeholder="Age"
-                                bind:value={companions[i].age}
+                                bind:value={companion[i].age}
                             />
                         </div>
 
@@ -238,7 +230,7 @@
                             <select
                                 id="gender-select"
                                 class="rounded-lg w-full p-2 border border-gray-300"
-                                bind:value={companions[i].gender}
+                                bind:value={companion[i].gender}
                             >
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
@@ -266,7 +258,9 @@
                 </div>
             </div>
 
-            <label for="date-input" class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
+            <label
+                for="date-input"
+                class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
                 >Date of Visit</label
             >
             <input
@@ -313,7 +307,9 @@
                 {/if}
             </div>
 
-            <label for="file-input" class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
+            <label
+                for="file-input"
+                class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
                 >Authority Letter (PDF)</label
             >
             <input
@@ -328,10 +324,6 @@
                     Selected: {authorityLetterFile.name}
                 </div>
             {/if}
-
-            <div class="text-gray-500 text-sm mt-2">
-                Fee: {feePerPerson} | Total: {total}
-            </div>
 
             <button
                 class="w-full h-12 mt-3 rounded-lg font-bold bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-60"

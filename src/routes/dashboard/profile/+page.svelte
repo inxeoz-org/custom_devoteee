@@ -5,8 +5,9 @@
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
     import { goto } from "$app/navigation";
+    import type { DevoteeeProfile } from "@src/app.js";
 
-    let profile: any = null;
+    let profile: DevoteeeProfile;
     let error: string | null = null;
     let loading = true;
 
@@ -17,6 +18,7 @@
             const token = get(auth_token);
             const data = await getDevoteeProfile(token);
             profile = data?.message;
+            console.log(profile);
         } catch (e) {
             error = "Failed to load profile";
             console.error(e);
@@ -57,11 +59,8 @@
                 />
                 <div class="text-center">
                     <h2 class="text-2xl font-bold text-gray-800 mb-1">
-                        {profile.devoteee_name ?? profile.owner ?? profile.name}
+                        {profile.devoteee_name}
                     </h2>
-                    <p class="text-gray-500 text-sm">
-                        {profile.doctype ?? "Darshan Devoteee Profile"}
-                    </p>
                 </div>
             </div>
 
@@ -74,7 +73,7 @@
                 <div class="flex justify-between border-b pb-2">
                     <span class="font-medium">Email</span>
                     <span class="text-sm text-gray-600"
-                        >{profile.email ?? profile.frappe_profile ?? "—"}</span
+                        >{profile.email ?? "—"}</span
                     >
                 </div>
 
@@ -88,31 +87,7 @@
                     <span>{profile.dob}</span>
                 </div>
 
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium">E-KYC</span>
-                    <Badge
-                        color={truthyInt(profile.is_ekyc_complete)
-                            ? "success"
-                            : "warning"}
-                    >
-                        {truthyInt(profile.is_ekyc_complete)
-                            ? "Completed"
-                            : "Pending"}
-                    </Badge>
-                </div>
-
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium">Companion</span>
-                    <Badge
-                        color={truthyInt(profile.is_devoteee_companion)
-                            ? "info"
-                            : "gray"}
-                    >
-                        {truthyInt(profile.is_devoteee_companion)
-                            ? "Yes"
-                            : "No"}
-                    </Badge>
-                </div>
+                >
 
                 <div class="flex justify-between border-b pb-2">
                     <span class="font-medium">Aadhar</span>
@@ -126,11 +101,6 @@
                     <span class="text-sm text-gray-600"
                         >{profile.location ?? "—"}</span
                     >
-                </div>
-
-                <div class="flex justify-between">
-                    <span class="font-medium">Created On</span>
-                    <span>{profile.creation}</span>
                 </div>
             </div>
 

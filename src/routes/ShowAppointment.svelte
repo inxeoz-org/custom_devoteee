@@ -145,7 +145,7 @@
                     {data.workflow_state ?? "—"}
                 </Badge>
             </div>
-            <div><strong>Type:</strong> {data.appointment_type ?? "—"}</div>
+
             <div>
                 <strong>Date:</strong>
                 {data.slot_date}

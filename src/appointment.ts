@@ -107,8 +107,9 @@ export function frappeDateToISO(
 
 export type Companion = {
   companion_name: string;
-  companion_phone: string;
-  companion_age: number | string;
+  phone: string;
+  age: number | string;
+  gender: string;
 };
 
 export type Vip_Appointment_Payload = {
