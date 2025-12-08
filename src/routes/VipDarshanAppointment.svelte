@@ -11,7 +11,7 @@
     } from "@src/api.js";
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
-    import { Modal } from "flowbite-svelte";
+    import { Modal, Badge } from "flowbite-svelte";
     import { ArrowUpRightFromSquareOutline } from "flowbite-svelte-icons";
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
@@ -26,9 +26,11 @@
     export let open = false;
     export let appointment_id: string | null = null;
 
-    export let title = "Book VIP Darshan (Protocol)";
+    let title = "Book VIP Darshan (Protocol)";
     export let subtitle = "Select your protocol category to proceed.";
     export let sectionTitle = "Book VIP Darshan";
+
+    $: title = appointment_id ? "Edit VIP Darshan Appointment" : "Book VIP Darshan (Protocol)";
 
     let profile: DevoteeeProfile;
     let protocol_list: Protocol[];
@@ -119,8 +121,8 @@
         loading = true;
         try {
             const token = get(auth_token);
-            await submitAppointment(token, appointment_id);
-            appointmentState = "pending";
+            const result_data = await submitAppointment(token, appointment_id);
+            appointmentState = result_data?.message.workflow_state;
             toast.message("Appointment submitted successfully");
         } catch (err) {
             console.error(err);
@@ -170,15 +172,24 @@
             >
                 {title}
             </h1>
-            <p class="text-sm sm:text-base text-gray-500 text-center mb-4">
-                {subtitle}
-            </p>
+        <p class="text-sm sm:text-base text-gray-500 text-center mb-4">
+            {subtitle}
+        </p>
 
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold text-gray-900">
-                    {sectionTitle}
-                </h2>
+        {#if appointment_id}
+            <div class="mb-4">
+                <strong>Appointment ID:</strong> {appointment_id}
+                <Badge color={appointmentState === 'draft' ? 'blue' : appointmentState === 'pending' ? 'orange' : 'green'} class="ml-2">
+                    {appointmentState}
+                </Badge>
             </div>
+        {/if}
+
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">
+                {sectionTitle}
+            </h2>
+        </div>
 
             {#if !(profile?.devoteee_name || devoteee_name)}
                 <div
@@ -197,7 +208,7 @@
                 </div>
             {/if}
             <label class="block text-sm font-semibold text-gray-700 mb-1"
-                >Primary Devotee</label
+                >Devotee</label
             >
             <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 mb-3">
                 {profile?.devoteee_name || devoteee_name}
