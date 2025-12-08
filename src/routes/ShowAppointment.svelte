@@ -4,6 +4,7 @@
 
     import { getAppointment, submitAppointment } from "@src/api.js";
     import VipDarshanAppointment from "@src/routes/VipDarshanAppointment.svelte";
+    import StaticShowDarshanAppointment from "@src/routes/StaticShowDarshanAppointment.svelte";
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
     import { toast } from "svelte-sonner";
@@ -24,6 +25,7 @@
     // local modal open — used for Flowbite's bind:open (triggers modal open/close)
     let open = true;
     let showEdit = false;
+    let showView = false;
 
     async function fetchAppointment() {
         if (!appointmentId) {
@@ -220,6 +222,14 @@
                     >
                         {#if submitting}Submitting...{:else}Submit Appointment{/if}
                     </Button>
+                {:else if workflow_state === "Pending"}
+                    <Button
+                        color="blue"
+                        size="sm"
+                        onclick={() => showView = true}
+                    >
+                        Show Appointment
+                    </Button>
                 {/if}
 
                 <Button
@@ -258,3 +268,5 @@
 </Modal>
 
 <VipDarshanAppointment bind:open={showEdit} appointment_id={appointmentId} />
+
+<StaticShowDarshanAppointment bind:open={showView} appointment_id={appointmentId} />
