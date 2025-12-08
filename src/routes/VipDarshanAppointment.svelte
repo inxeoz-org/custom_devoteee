@@ -30,7 +30,9 @@
     export let subtitle = "Select your protocol category to proceed.";
     export let sectionTitle = "Book VIP Darshan";
 
-    $: title = appointment_id ? "Edit VIP Darshan Appointment" : "Book VIP Darshan (Protocol)";
+    $: title = appointment_id
+        ? "Edit VIP Darshan Appointment"
+        : "Book VIP Darshan (Protocol)";
 
     let profile: DevoteeeProfile;
     let protocol_list: Protocol[];
@@ -131,8 +133,8 @@
             loading = false;
         }
     }
-    onMount(async () => {
-        loading = true;
+
+    async function resetForm() {
         const token = get(auth_token);
 
         if (appointment_id) {
@@ -154,8 +156,12 @@
             profile = profile_data?.message;
             companion = profile?.companion;
         }
+    }
 
-        const protocols_data = await getProtocolList(token);
+    onMount(async () => {
+        loading = true;
+        await resetForm();
+        const protocols_data = await getProtocolList(get(auth_token));
         protocol_list = protocols_data?.message;
 
         loading = false;
@@ -172,24 +178,32 @@
             >
                 {title}
             </h1>
-        <p class="text-sm sm:text-base text-gray-500 text-center mb-4">
-            {subtitle}
-        </p>
+            <p class="text-sm sm:text-base text-gray-500 text-center mb-4">
+                {subtitle}
+            </p>
 
-        {#if appointment_id}
-            <div class="mb-4">
-                <strong>Appointment ID:</strong> {appointment_id}
-                <Badge color={appointmentState === 'draft' ? 'blue' : appointmentState === 'pending' ? 'orange' : 'green'} class="ml-2">
-                    {appointmentState}
-                </Badge>
+            {#if appointment_id}
+                <div class="mb-4">
+                    <strong>Appointment ID:</strong>
+                    {appointment_id}
+                    <Badge
+                        color={appointmentState === "draft"
+                            ? "blue"
+                            : appointmentState === "pending"
+                              ? "orange"
+                              : "green"}
+                        class="ml-2"
+                    >
+                        {appointmentState}
+                    </Badge>
+                </div>
+            {/if}
+
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">
+                    {sectionTitle}
+                </h2>
             </div>
-        {/if}
-
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">
-                {sectionTitle}
-            </h2>
-        </div>
 
             {#if !(profile?.devoteee_name || devoteee_name)}
                 <div
@@ -382,6 +396,15 @@
                         {#if loading}Processing...{:else}Submit{/if}
                     </button>
                 </div>
+            {/if}
+
+            {#if !appointment_id || appointmentState === "Draft"}
+                <button
+                    class="w-full h-12 mt-3 rounded-lg font-bold bg-gray-600 text-white hover:bg-gray-700 transition"
+                    on:click={resetForm}
+                >
+                    Clear Form
+                </button>
             {/if}
         </div>
     </Modal>

@@ -58,6 +58,7 @@
         show = true;
     }
     function handleModalClose() {
+        FetchBookings();
         show = false;
     }
 </script>
@@ -72,10 +73,7 @@
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-bold text-slate-700">{sectionTitle}</h2>
             <div class="flex items-center gap-3">
-                <Button
-                    color="blue"
-                    onclick={() => showCreate = true}
-                >
+                <Button color="blue" onclick={() => (showCreate = true)}>
                     Create Vip Darshan Appointment
                 </Button>
                 <Button
