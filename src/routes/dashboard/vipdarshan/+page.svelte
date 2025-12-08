@@ -104,6 +104,8 @@
 </script>
 
 {#if loading}
+    <h1>Loading</h1>
+{:else}
     <div class="min-h-screen bg-gray-100 grid place-items-center px-4 py-6">
         <div
             class="w-full max-w-xl sm:max-w-2xl lg:max-w-3xl bg-white rounded-xl shadow-lg p-5 sm:p-6 overflow-auto"
@@ -123,7 +125,7 @@
                 </h2>
             </div>
 
-            {#if !(profile.devoteee_name.length > 0 || profile.phone.length > 0)}
+            {#if !(profile?.devoteee_name.length > 0 || profile?.phone.length > 0)}
                 <div
                     class="border border-gray-300 rounded-lg p-3 bg-gray-50 mb-4"
                 >
@@ -147,7 +149,7 @@
                 <div
                     class="border border-gray-300 rounded-lg p-3 bg-gray-50 mb-3"
                 >
-                    {profile.devoteee_name}
+                    {profile?.devoteee_name}
                 </div>
 
                 <label
@@ -328,6 +330,4 @@
             {/if}
         </div>
     </div>
-{:else}
-    <h1>Loading</h1>
 {/if}
