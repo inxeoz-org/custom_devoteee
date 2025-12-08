@@ -54,7 +54,7 @@
     async function reset_profile() {
         const token = get(auth_token);
         const data = await getDevoteeProfile(token);
-        profle_data = data?.message?.profile;
+        profle_data = data?.message;
 
         name = profle_data?.devoteee_name ?? "";
         gender = profle_data?.gender ?? "";

@@ -16,7 +16,7 @@
         try {
             const token = get(auth_token);
             const data = await getDevoteeProfile(token);
-            profile = data?.message?.profile;
+            profile = data?.message;
         } catch (e) {
             error = "Failed to load profile";
             console.error(e);
