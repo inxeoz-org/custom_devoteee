@@ -6,7 +6,7 @@
 
     import { user_logged_in, auth_token } from "@src/store.js";
 
-    import { loginCheck, verifyOtpLogin } from "@src/api.ts";
+    import { loginCheck, verifyOtpLogin } from "@src/api.js";
     import { toast } from "svelte-sonner";
 
     // phone as string to allow leading + / 0 etc
