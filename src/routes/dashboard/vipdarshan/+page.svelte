@@ -244,6 +244,18 @@
                 </div>
 
                 <label
+                    for="state-input"
+                    class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
+                    >State</label
+                >
+                <input
+                    id="state-input"
+                    class="border border-gray-300 rounded-lg p-2 w-full"
+                    type="text"
+                    bind:value={selectedState}
+                />
+
+                <label
                     for="date-input"
                     class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
                     >Date of Visit</label
@@ -254,18 +266,6 @@
                     type="date"
                     bind:value={slot_date}
                     on:change={() => fetch_slot_info(slot_date)}
-                />
-
-                <label
-                    for="state-input"
-                    class="block text-sm font-semibold text-gray-700 mt-4 mb-1"
-                    >State</label
-                >
-                <input
-                    id="state-input"
-                    class="border border-gray-300 rounded-lg p-2 w-full"
-                    type="text"
-                    bind:value={selectedState}
                 />
 
                 <label

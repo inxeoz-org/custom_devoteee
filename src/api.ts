@@ -2,7 +2,7 @@ import { API_BASE } from "$lib/env.js";
 import type { DevoteeeProfile, Protocol, Companion } from "@src/app.js";
 
 const DEVOTEE = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.devoteee.`;
-const SLOT = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.slot.slot.`;
+const SLOT = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.vip_darshan_slot.vip_darshan_slot.`;
 const PROTOCOL = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.vip_protocol.vip_protocol.`;
 
 // Import store functions for logout
