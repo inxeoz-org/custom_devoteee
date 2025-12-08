@@ -376,22 +376,6 @@ export async function logout() {
     return { success: false, message: "Logout failed" };
   }
 }
-
-// Registration function
-export async function registrationDevotee(phone: number) {
-  try {
-    const res = await fetch(DEVOTEE + "create_devoteee_user", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone }),
-    });
-    return await res.json();
-  } catch (err: any) {
-    console.error("registrationDevotee:", err);
-    return null;
-  }
-}
-
 // Utility function to delete all cookies
 export function deleteAllCookies() {
   const cookies = document.cookie.split(";");
