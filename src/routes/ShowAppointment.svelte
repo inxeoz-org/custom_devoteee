@@ -3,6 +3,7 @@
     import { Button, Modal, Badge } from "flowbite-svelte";
 
     import { getAppointment, submitAppointment } from "@src/api.js";
+    import VipDarshanAppointment from "@src/routes/VipDarshanAppointment.svelte";
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
     import { toast } from "svelte-sonner";
@@ -22,6 +23,7 @@
     let showRaw = false;
     // local modal open — used for Flowbite's bind:open (triggers modal open/close)
     let open = true;
+    let showEdit = false;
 
     async function fetchAppointment() {
         if (!appointmentId) {
@@ -204,6 +206,13 @@
             <div class="flex flex-wrap gap-2 mb-4">
                 {#if workflow_state === "Draft"}
                     <Button
+                        color="green"
+                        size="sm"
+                        onclick={() => showEdit = true}
+                    >
+                        Edit Appointment
+                    </Button>
+                    <Button
                         color="blue"
                         size="sm"
                         disabled={submitting}
@@ -247,3 +256,5 @@
         </div>
     {/if}
 </Modal>
+
+<VipDarshanAppointment bind:open={showEdit} appointment_id={appointmentId} />

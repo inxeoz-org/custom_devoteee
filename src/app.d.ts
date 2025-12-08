@@ -82,6 +82,7 @@ export const AppointmentBasicSchema = z.object({
 export type AppointmentBasic = z.infer<typeof AppointmentBasicSchema>;
 
 export const AppointmentFullSchema = AppointmentBasicSchema.extend({
+  devoteee_name: z.string().min(1),
   escort_person: z.string().uuid().nullable(),
   companion: z.array(CompanionSchema),
 });

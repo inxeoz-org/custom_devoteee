@@ -1,5 +1,4 @@
 <script lang="ts">
-
     import {
         createAppointment,
         getDevoteeProfile,
@@ -38,7 +37,7 @@
     let slots: VipDarshanSlot[] = [];
 
     let selectedProtocol = "";
-
+    let devoteee_name = "";
     let slot_date = "";
     let selectedSlotName = "";
     let selectedState = "";
@@ -57,7 +56,6 @@
     function removeCompanion(i: number) {
         companion = companion.filter((_, idx) => idx !== i);
     }
-
 
     async function fetch_slot_info(slot_date: string) {
         const data = await getVipDarshanSlots(slot_date);
@@ -83,10 +81,11 @@
         const details = getAppointmentDetails();
         try {
             const token = get(auth_token);
-            const result = await createAppointment(token, details);
-            if (result && result.message) {
-                appointment_id = result.message.name; // assuming id is name
-                appointmentState = 'draft';
+            const result_data = await createAppointment(token, details);
+            const result: AppointmentFull = result_data?.meeage;
+            if (result) {
+                appointment_id = result.name; // assuming id is name
+                appointmentState = result.workflow_state;
                 toast.message("Appointment created successfully");
             } else {
                 toast.error("Failed to create appointment");
@@ -121,7 +120,7 @@
         try {
             const token = get(auth_token);
             await submitAppointment(token, appointment_id);
-            appointmentState = 'pending';
+            appointmentState = "pending";
             toast.message("Appointment submitted successfully");
         } catch (err) {
             console.error(err);
@@ -140,19 +139,22 @@
                 appointment_id,
             );
             const appointment: AppointmentFull = appointment_data?.message;
+            console.log(appointment);
             slot_date = appointment.slot_date;
             selectedSlotName = appointment.slot;
             selectedProtocol = appointment.protocol;
             selectedState = appointment.state;
             companion = appointment.companion;
-            appointmentState = appointment.state;
+            appointmentState = appointment.workflow_state;
+            devoteee_name = appointment.devoteee_name;
         } else {
             const profile_data = await getDevoteeProfile(token);
-            const protocols_data = await getProtocolList(token);
-            protocol_list = protocols_data?.message;
             profile = profile_data?.message;
             companion = profile?.companion;
         }
+
+        const protocols_data = await getProtocolList(token);
+        protocol_list = protocols_data?.message;
 
         loading = false;
     });
@@ -161,46 +163,44 @@
 {#if loading}
     <h1>Loading</h1>
 {:else}
-    <Modal bind:open={open} size="xl" class="w-full">
+    <Modal bind:open size="xl" class="w-full">
         <div class="bg-white rounded-xl shadow-lg p-5 sm:p-6 overflow-auto">
-        <h1
-            class="text-xl sm:text-2xl font-semibold text-gray-800 text-center mb-1"
-        >
-            {title}
-        </h1>
-        <p class="text-sm sm:text-base text-gray-500 text-center mb-4">
-            {subtitle}
-        </p>
-
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">
-                {sectionTitle}
-            </h2>
-        </div>
-
-        {#if !(profile?.devoteee_name.length > 0 || profile?.phone.length > 0)}
-            <div
-                class="border border-gray-300 rounded-lg p-3 bg-gray-50 mb-4"
+            <h1
+                class="text-xl sm:text-2xl font-semibold text-gray-800 text-center mb-1"
             >
-                <a href="/" class="block mb-2 text-gray-500 font-semibold"
-                    >Complete profile required !!!</a
-                >
-                <a
-                    href="/"
-                    class="text-blue-600 inline-flex items-center hover:underline"
-                >
-                    Complete Profile Dashboard
-                    <ArrowUpRightFromSquareOutline class="ms-2.5 h-4 w-4" />
-                </a>
+                {title}
+            </h1>
+            <p class="text-sm sm:text-base text-gray-500 text-center mb-4">
+                {subtitle}
+            </p>
+
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">
+                    {sectionTitle}
+                </h2>
             </div>
-        {/if}
+
+            {#if !(profile?.devoteee_name || devoteee_name)}
+                <div
+                    class="border border-gray-300 rounded-lg p-3 bg-gray-50 mb-4"
+                >
+                    <a href="/" class="block mb-2 text-gray-500 font-semibold"
+                        >Complete profile required !!!</a
+                    >
+                    <a
+                        href="/"
+                        class="text-blue-600 inline-flex items-center hover:underline"
+                    >
+                        Complete Profile Dashboard
+                        <ArrowUpRightFromSquareOutline class="ms-2.5 h-4 w-4" />
+                    </a>
+                </div>
+            {/if}
             <label class="block text-sm font-semibold text-gray-700 mb-1"
                 >Primary Devotee</label
             >
-            <div
-                class="border border-gray-300 rounded-lg p-3 bg-gray-50 mb-3"
-            >
-                {profile?.devoteee_name}
+            <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 mb-3">
+                {profile?.devoteee_name || devoteee_name}
             </div>
 
             <label
@@ -219,8 +219,7 @@
                 {/each}
             </select>
 
-            <label
-                class="block text-sm font-semibold text-gray-700 mt-4 mb-2"
+            <label class="block text-sm font-semibold text-gray-700 mt-4 mb-2"
                 >Companions ({companion.length})</label
             >
             <div class="space-y-3">
@@ -319,14 +318,10 @@
                 on:change={() => fetch_slot_info(slot_date)}
             />
 
-            <label
-                class="block text-sm font-semibold text-gray-700 mt-4 mb-2"
-            >
+            <label class="block text-sm font-semibold text-gray-700 mt-4 mb-2">
                 Available Slots
             </label>
-            <div
-                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"
-            >
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {#if slots?.length > 0}
                     {#each slots as s (s.slot_name)}
                         <button
@@ -359,7 +354,7 @@
                 >
                     {#if loading}Processing...{:else}Create Appointment{/if}
                 </button>
-            {:else if appointmentState === 'draft'}
+            {:else if appointmentState === "Draft"}
                 <div class="flex gap-3 mt-3">
                     <button
                         class="flex-1 h-12 rounded-lg font-bold bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-60"
