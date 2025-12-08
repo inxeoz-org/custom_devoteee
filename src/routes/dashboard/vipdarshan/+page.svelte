@@ -43,6 +43,11 @@
     let selectedState = "";
     let loading = false;
     let appointmentState = "";
+    let isOpen = true;
+
+    $: if (!isOpen) {
+        goto('/dashboard/mybooking');
+    }
 
     function addCompanion() {
         const c: Companion = {
@@ -158,7 +163,7 @@
     {#if loading}
         <h1>Loading</h1>
     {:else}
-        <Modal open size="xl" class="w-full">
+        <Modal bind:open={isOpen} size="xl" class="w-full">
             <div class="bg-white rounded-xl shadow-lg p-5 sm:p-6 overflow-auto">
             <h1
                 class="text-xl sm:text-2xl font-semibold text-gray-800 text-center mb-1"
@@ -374,6 +379,15 @@
                         </button>
                     </div>
                 {/if}
+
+                <div class="mt-4 text-center">
+                    <button
+                        class="bg-gray-600 text-white rounded-lg px-4 py-2 font-semibold hover:bg-gray-700"
+                        on:click={() => goto('/dashboard/mybooking')}
+                    >
+                        Go to Appointment List
+                    </button>
+                </div>
             </div>
         </Modal>
 {/if}
