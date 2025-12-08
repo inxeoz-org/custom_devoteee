@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
     export let selectedDate = "";
     export let selectedTime = "";
 
@@ -56,4 +56,4 @@
     >
         Book Now
     </button>
-</div>
+</div> -->

@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
     export let selectedDate = "";
     export let selectedTime = "";
 
@@ -7,7 +7,7 @@
         "07:00 AM - 08:00 AM",
         "08:00 AM - 09:00 AM",
         "09:00 AM - 10:00 AM",
-        "10:00 AM - 11:00 AM",
+        // "10:00 AM - 11:00 AM",
     ];
 
     function submitBooking() {
@@ -54,4 +54,4 @@
     >
         Book Now
     </button>
-</div>
+</div> -->
