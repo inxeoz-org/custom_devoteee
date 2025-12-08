@@ -109,6 +109,7 @@
         try {
             const token = get(auth_token);
             await updateAppointment(token, appointment_id, details);
+            await resetForm();
             toast.message("Appointment saved successfully");
         } catch (err) {
             console.error(err);
@@ -123,8 +124,9 @@
         loading = true;
         try {
             const token = get(auth_token);
-            const result_data = await submitAppointment(token, appointment_id);
-            appointmentState = result_data?.message.workflow_state;
+            await submitAppointment(token, appointment_id);
+            await resetForm();
+            // appointmentState = result_data?.message.workflow_state;
             toast.message("Appointment submitted successfully");
         } catch (err) {
             console.error(err);
