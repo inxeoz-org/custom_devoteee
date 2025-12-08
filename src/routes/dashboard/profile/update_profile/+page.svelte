@@ -24,7 +24,7 @@
     let name = "";
     let gender = "";
     let dob = "";
-    let address = "";
+    let location = "";
     let aadhar = "";
 
     let touched = { name: false, gender: false, dob: false };
@@ -39,7 +39,7 @@
             devoteee_name: name.trim(),
             gender,
             dob,
-            address: address.trim(),
+            location: location.trim(),
             aadhar: aadhar.trim(),
         };
 
@@ -59,7 +59,7 @@
         name = profle_data?.devoteee_name ?? "";
         gender = profle_data?.gender ?? "";
         dob = profle_data?.dob ?? "";
-        address = profle_data?.address ?? "";
+        location = profle_data?.location ?? "";
         aadhar = profle_data?.aadhar ?? "";
     }
 
@@ -197,7 +197,7 @@
                                     id="address"
                                     rows="3"
                                     placeholder="123 Main St, Anytown"
-                                    bind:value={address}
+                                    bind:value={location}
                                     class="mt-1"
                                 />
                             </div>

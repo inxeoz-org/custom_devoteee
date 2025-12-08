@@ -11,7 +11,7 @@
     export let welcome = "Welcome back!";
 
     let devoteee_name = "";
-    let is_ekyc_complete = 0;
+    let phone = "";
     let show_dashboard = false;
 
     const defaultActions = [
@@ -62,10 +62,8 @@
 
             if (devoteee_details) {
                 show_dashboard = true;
-                console.log(devoteee_details);
-                console.log(devoteee_details.is_ekyc_complete);
                 devoteee_name = devoteee_details.devoteee_name || "";
-                is_ekyc_complete = devoteee_details.is_ekyc_complete || 0;
+                phone = devoteee_details.phone || "";
             }
         } catch (error) {
             console.error("Failed to load profile:", error);
@@ -88,7 +86,7 @@
                 {/if}
             </p>
 
-            {#if is_ekyc_complete === 0}
+            {#if phone.length < 3 || devoteee_name.length == 0}
                 <Alert color="red">
                     Please complete your profile to continue.
                     <Badge
