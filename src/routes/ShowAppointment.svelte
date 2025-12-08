@@ -9,6 +9,7 @@
     import { get } from "svelte/store";
     import { toast } from "svelte-sonner";
     import type { AppointmentFull } from "@src/app.js";
+    import { badgeClass } from "@src/utils.js";
 
     let workflow_state = "Demo";
 
@@ -131,13 +132,7 @@
             </div>
             <div>
                 <strong>Status:</strong>
-                <Badge
-                    color={appointment.workflow_state === "Approved"
-                        ? "green"
-                        : appointment.workflow_state === "Pending"
-                          ? "orange"
-                          : "red"}
-                >
+                <Badge color={badgeClass(appointment.workflow_state)}>
                     {appointment.workflow_state ?? "—"}
                 </Badge>
             </div>
@@ -210,7 +205,7 @@
                     <Button
                         color="green"
                         size="sm"
-                        onclick={() => showEdit = true}
+                        onclick={() => (showEdit = true)}
                     >
                         Edit Appointment
                     </Button>
@@ -226,7 +221,7 @@
                     <Button
                         color="blue"
                         size="sm"
-                        onclick={() => showView = true}
+                        onclick={() => (showView = true)}
                     >
                         Show Appointment
                     </Button>
@@ -269,4 +264,7 @@
 
 <VipDarshanAppointment bind:open={showEdit} appointment_id={appointmentId} />
 
-<StaticShowDarshanAppointment bind:open={showView} appointment_id={appointmentId} />
+<StaticShowDarshanAppointment
+    bind:open={showView}
+    appointment_id={appointmentId}
+/>

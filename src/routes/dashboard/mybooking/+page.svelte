@@ -9,6 +9,7 @@
     import type { Booking, Status } from "@src/appointment.js";
     import type { AppointmentBasic } from "@src/app.js";
     import { Card, Button, Badge } from "flowbite-svelte";
+    import { badgeClass } from "@src/utils.js";
 
     let appointments: AppointmentBasic[] = [];
     export let limitStart = 0;
@@ -24,19 +25,6 @@
     let show = false;
     let selectedAppointmentId: string | null = null;
     let showCreate = false;
-
-    function badgeClass(workflowState: Status | string) {
-        switch (workflowState) {
-            case "Approved":
-                return "green";
-            case "Pending":
-                return "orange";
-            case "Pending Verification":
-                return "blue";
-            default:
-                return "gray";
-        }
-    }
 
     async function FetchBookings() {
         loading = true;

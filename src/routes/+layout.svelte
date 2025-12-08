@@ -19,7 +19,7 @@
     // Import Toaster once (global notifications)
     import { Toaster } from "svelte-sonner";
     import { onMount } from "svelte";
-    import { logout } from "@src/api.ts";
+    import { logout } from "@src/api.js";
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
 

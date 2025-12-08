@@ -15,6 +15,7 @@
     import { ArrowUpRightFromSquareOutline } from "flowbite-svelte-icons";
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
+    import { badgeClass } from "@src/utils.js";
     import type {
         DevoteeeProfile,
         Protocol,
@@ -188,14 +189,7 @@
                 <div class="mb-4">
                     <strong>Appointment ID:</strong>
                     {appointment_id}
-                    <Badge
-                        color={appointmentState === "draft"
-                            ? "blue"
-                            : appointmentState === "pending"
-                              ? "orange"
-                              : "green"}
-                        class="ml-2"
-                    >
+                    <Badge color={badgeClass(appointmentState)} class="ml-2">
                         {appointmentState}
                     </Badge>
                 </div>

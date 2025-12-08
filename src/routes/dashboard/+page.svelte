@@ -23,16 +23,16 @@
         },
         {
             id: "viewBookings",
-            label: "View Bookings",
+            label: "Vip Bookings",
             site: "/dashboard/mybooking",
             button_color: "blue",
         },
-        {
-            id: "bookVip",
-            label: "Book - VIP Darshan",
-            site: "/dashboard/vipdarshan",
-            button_color: "blue",
-        },
+        // {
+        //     id: "bookVip",
+        //     label: "Book - VIP Darshan",
+        //     site: "/dashboard/vipdarshan",
+        //     button_color: "blue",
+        // },
         {
             id: "bookShigra",
             label: "Book - Shigra Darshan",

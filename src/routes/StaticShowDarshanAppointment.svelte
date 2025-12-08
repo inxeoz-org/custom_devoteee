@@ -5,6 +5,7 @@
     import { Modal, Badge } from "flowbite-svelte";
     import { ArrowUpRightFromSquareOutline } from "flowbite-svelte-icons";
     import { onMount } from "svelte";
+    import { badgeClass } from "@src/utils.js";
     import type {
         DevoteeeProfile,
         Protocol,
@@ -62,11 +63,7 @@
                     <strong>Appointment ID:</strong>
                     {appointment_id}
                     <Badge
-                        color={appointment.workflow_state === "draft"
-                            ? "blue"
-                            : appointment.workflow_state === "pending"
-                              ? "orange"
-                              : "green"}
+                        color={badgeClass(appointment.workflow_state)}
                         class="ml-2"
                     >
                         {appointment.workflow_state}
