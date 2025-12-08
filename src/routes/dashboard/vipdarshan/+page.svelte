@@ -86,6 +86,7 @@
         const protocols_data = await getProtocolList(token);
         protocol_list = protocols_data?.message;
         profile = profile_data?.message;
+        companion = profile?.companion;
 
         console.log("Profile:", profile);
         console.log("Protocols:", protocol_list);
@@ -269,7 +270,7 @@
                     {#if slots?.length > 0}
                         {#each slots as s (s.slot_name)}
                             <button
-                                class={`flex flex-col items-center justify-center gap-1 min-h-[64px] p-3 border-2 ${selectedSlotName === s.slot_name ? 'bg-green-100 border-green-500' : 'bg-white border-gray-300'} `}
+                                class={`flex flex-col items-center justify-center gap-1 min-h-[64px] p-3 border-2 ${selectedSlotName === s.slot_name ? "bg-green-100 border-green-500" : "bg-white border-gray-300"} `}
                                 on:click={() => select_slot(s.slot_name)}
                                 aria-pressed={selectedSlotName === s.slot_name}
                             >
