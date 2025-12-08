@@ -9,6 +9,7 @@
 
     import { Card, Button, Badge } from "flowbite-svelte";
 
+    let appointments: [] = [];
     export let limitStart = 0;
     export let pageLength = 10;
 
@@ -18,7 +19,6 @@
 
     let loading = false;
     let error: string | null = null;
-    export let bookings: Booking[] = [];
 
     let show = false;
     let selectedId: string | null = null;
@@ -43,9 +43,9 @@
         const token = get(auth_token);
         const data = await getAppointmentList(token, {
             limitStart,
-            pageLength
+            pageLength,
         });
-        bookings = (data as any).message as Booking[];
+        appointments = data?.message;
         loading = false;
     }
 
@@ -91,38 +91,35 @@
         <section>
             <h3 class="text-sm font-semibold text-slate-700 mb-2">Bookings</h3>
             <div class="grid gap-3">
-                {#if loading && bookings.length === 0}
+                {#if loading && appointments.length === 0}
                     <div class="text-slate-500">Loading bookings…</div>
                 {:else}
-                    {#each bookings as b}
+                    {#each appointments as a}
                         <Button
                             class="flex items-start justify-between p-4 rounded-xl border bg-white hover:shadow-sm"
                             color="light"
-                            onclick={() => openModal(b)}
-                            aria-label={`Open booking ${b.name}`}
+                            onclick={() => openModal(a)}
+                            aria-label={`Open booking ${a.name}`}
                         >
                             <div class="text-left">
                                 <div class="font-semibold text-slate-800">
-                                    {b.name}
+                                    {a.name}
                                 </div>
                                 <div class="text-xs text-slate-500 mt-1">
-                                    Darshan: {b.darshan_type}
+                                    Darshan: {a.slot}
                                 </div>
                                 <div class="text-xs text-slate-400 mt-1">
-                                    {b.darshan_date}@
-
-                                    {b.slot_start_time} to
-                                    {b.slot_end_time}
+                                    {a.slot_date}
                                 </div>
                             </div>
                             <div class="ml-4">
-                                <Badge color={badgeClass(b.workflow_state)}>
-                                    {b.workflow_state}
+                                <Badge color={badgeClass(a.workflow_state)}>
+                                    {a.workflow_state}
                                 </Badge>
                             </div>
                         </Button>
                     {/each}
-                    {#if bookings.length === 0 && !loading}
+                    {#if appointments.length === 0 && !loading}
                         <div class="text-slate-500">No bookings.</div>
                     {/if}
                 {/if}
