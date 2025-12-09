@@ -38,11 +38,11 @@
         loading = true;
 
         const info: DevoteeeProfile = {
-            devoteee_name: name.trim(),
+            devoteee_name: name,
             gender,
             dob: dob,
-            location: location.trim(),
-            aadhar: aadhar.trim(),
+            location: location,
+            aadhar: aadhar,
             companion: companion,
             phone: null,
             email: null,
