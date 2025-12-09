@@ -11,7 +11,7 @@
         Protocol,
         Companion,
         VipDarshanSlot,
-        AppointmentFull,
+        Appointment,
     } from "@src/app.js";
 
     export let open = false;
@@ -21,7 +21,7 @@
     export let subtitle = "Appointment details.";
     export let sectionTitle = "VIP Darshan Appointment";
 
-    let appointment: AppointmentFull;
+    let appointment: Appointment;
 
     let loading = false;
 

@@ -8,12 +8,12 @@
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
     import { toast } from "svelte-sonner";
-    import type { AppointmentFull } from "@src/app.js";
+    import type { Appointment } from "@src/app.js";
     import { badgeClass } from "@src/utils.js";
 
     let workflow_state = "Demo";
 
-    let appointment: AppointmentFull;
+    let appointment: Appointment;
 
     export let appointmentId: string;
 

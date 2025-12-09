@@ -7,11 +7,11 @@
     import { auth_token } from "@src/store.js";
     import { get } from "svelte/store";
     import type { Booking, Status } from "@src/appointment.js";
-    import type { AppointmentBasic } from "@src/app.js";
+    import type { Appointment } from "@src/app.js";
     import { Card, Button, Badge } from "flowbite-svelte";
     import { badgeClass } from "@src/utils.js";
 
-    let appointments: AppointmentBasic[] = [];
+    let appointments: Appointment[] = [];
     export let limitStart = 0;
     export let pageLength = 10;
 

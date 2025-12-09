@@ -21,7 +21,7 @@
         Protocol,
         Companion,
         VipDarshanSlot,
-        AppointmentFull,
+        Appointment,
     } from "@src/app.js";
 
     export let open = false;
@@ -86,7 +86,7 @@
         const details = getAppointmentDetails();
         try {
             const result_data = await createAppointment(details);
-            const result: AppointmentFull = result_data?.meeage;
+            const result: Appointment = result_data?.meeage;
             if (result) {
                 appointment_id = result.name; // assuming id is name
                 appointmentState = result.workflow_state;
