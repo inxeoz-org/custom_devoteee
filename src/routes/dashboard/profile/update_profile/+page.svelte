@@ -60,9 +60,9 @@
         profile = data?.message;
 
         name = profile.devoteee_name;
-        gender = profile.gender;
-        dob = profile.dob;
-        location = profile.location;
+        gender = (profile.gender ?? "").toLowerCase();
+        dob = profile.dob ?? "";
+        location = profile.location ?? "";
         aadhar = profile.aadhar ?? "";
     }
 
