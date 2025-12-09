@@ -6,7 +6,7 @@
     import { get } from "svelte/store";
     import { goto } from "$app/navigation";
     import type { DevoteeeProfile } from "@src/app.js";
-    import { frappe_to_dmy_date } from "@src/utils.js";
+    // import { frappe_to_dmy_date } from "@src/utils.js";
 
     let profile: DevoteeeProfile;
     let error: string | null = null;
@@ -84,7 +84,7 @@
 
                 <div class="flex justify-between border-b pb-2">
                     <span class="font-medium">Date of Birth</span>
-                    <span>{frappe_to_dmy_date(profile.dob)}</span>
+                    <span>{profile.dob ?? "—"}</span>
                 </div>
 
                 >

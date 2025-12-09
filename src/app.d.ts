@@ -19,7 +19,7 @@ export type Companion = z.infer<typeof CompanionSchema>;
    Devoteee Profile Schema + Type
 -------------------------------------------- */
 
-export const DevoteeeProfileBasicSchema = z.object({
+export const DevoteeeProfile = z.object({
   devoteee_name: z.string().min(1),
   gender: z.string(),
 
@@ -28,28 +28,14 @@ export const DevoteeeProfileBasicSchema = z.object({
     if (isNaN(d.getTime())) throw new Error("Invalid DOB");
     return d.toISOString().split("T")[0];
   }),
-
-  aadhar: z
-    .string()
-    .transform((v) => v.replace(/\D/g, ""))
-    .length(12, "Aadhar must be 12 digits"),
-
+  aadhar: z.string().nullable(),
   location: z.string(),
-
   companion: z.array(CompanionSchema),
+  email: z.string().email().nullable(),
+  phone: z.string().nullable(),
 });
 
-export type DevoteeeProfileBasic = z.infer<typeof DevoteeeProfileBasicSchema>;
-
-export const DevoteeeProfileFullSchema = DevoteeeProfileBasicSchema.extend({
-  email: z.string().email(),
-  phone: z
-    .string()
-    .transform((v) => v.replace(/\D/g, ""))
-    .refine((v) => /^[6-9]\d{9}$/.test(v), "Invalid phone number"),
-});
-
-export type DevoteeeProfile = z.infer<typeof DevoteeeProfileFullSchema>;
+export type DevoteeeProfile = z.infer<typeof DevoteeeProfile>;
 /* -------------------------------------------
    Protocol Schema + Type
 -------------------------------------------- */

@@ -1,12 +1,7 @@
 import { API_BASE } from "$lib/env.js";
 
 import { get } from "svelte/store";
-import type {
-  DevoteeeProfile,
-  Protocol,
-  Companion,
-  DevoteeeProfileBasic,
-} from "@src/app.js";
+import type { DevoteeeProfile, Protocol, Companion } from "@src/app.js";
 
 const DEVOTEE = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.devoteee.`;
 const SLOT = `${API_BASE}/api/method/custom_booking.custom_booking.doctype.vip_darshan_slot.vip_darshan_slot.`;
@@ -64,7 +59,7 @@ export async function getDevoteeProfile() {
   }
 }
 
-export async function updateProfile(profileData: DevoteeeProfileBasic) {
+export async function updateProfile(profileData: DevoteeeProfile) {
   try {
     const res = await fetch(DEVOTEE + "profile.update_profile", {
       method: "POST",

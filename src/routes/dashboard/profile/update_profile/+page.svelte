@@ -15,12 +15,8 @@
     } from "flowbite-svelte";
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
-    import { dmy_to_frappe_date, frappe_to_dmy_date } from "@src/utils.js";
-    import type {
-        Companion,
-        DevoteeeProfile,
-        DevoteeeProfileBasic,
-    } from "@src/app.js";
+    // import { dmy_to_frappe_date, frappe_to_dmy_date } from "@src/utils.js";
+    import type { Companion, DevoteeeProfile } from "@src/app.js";
 
     let loading = false;
 
@@ -41,13 +37,15 @@
         e.preventDefault();
         loading = true;
 
-        const info: DevoteeeProfileBasic = {
+        const info: DevoteeeProfile = {
             devoteee_name: name.trim(),
             gender,
             dob: dob,
             location: location.trim(),
             aadhar: aadhar.trim(),
             companion: companion,
+            phone: null,
+            email: null,
         };
 
         const json = await updateProfile(info);
@@ -62,10 +60,10 @@
         profile = data?.message;
 
         name = profile.devoteee_name;
-        gender = profile.gender.toLowerCase();
+        gender = profile.gender;
         dob = profile.dob;
         location = profile.location;
-        aadhar = profile.aadhar;
+        aadhar = profile.aadhar ?? "";
     }
 
     onMount(async () => {
@@ -84,11 +82,12 @@
                 <div class="flex items-center gap-4">
                     <div class="flex-shrink-0">
                         <Avatar
+                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profile.devoteee_name ?? "User")}&background=random`}
+                            alt="Avatar"
                             size="xl"
+                            cornerStyle="rounded"
                             stacked={false}
                             rounded={true}
-                            src={profile?.avatar || undefined}
-                            alt="Profile avatar"
                         />
                     </div>
                     <div class="flex-1">
@@ -111,12 +110,7 @@
                     <aside
                         class="md:col-span-1 flex flex-col items-center text-center p-4"
                     >
-                        <Avatar
-                            size="2xl"
-                            rounded={true}
-                            src={profile?.avatar || undefined}
-                            alt="User avatar"
-                        />
+                        <Avatar size="2xl" rounded={true} alt="User avatar" />
                         <h2 class="mt-4 text-xl font-semibold">
                             Update Your Profile
                         </h2>
