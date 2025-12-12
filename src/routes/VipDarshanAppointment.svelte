@@ -23,6 +23,7 @@
         VipDarshanSlot,
         Appointment,
     } from "@src/app.js";
+    import { fa } from "zod/locales";
 
     export let open = false;
     export let appointment_id: string | null = null;
@@ -82,11 +83,10 @@
     }
 
     async function createAppointmentFunc() {
-        loading = true;
         const details = getAppointmentDetails();
         try {
             const result_data = await createAppointment(details);
-            const result: Appointment = result_data?.meeage;
+            const result: Appointment = result_data?.message;
             if (result) {
                 appointment_id = result.name; // assuming id is name
                 appointmentState = result.workflow_state;
@@ -94,17 +94,17 @@
             } else {
                 toast.error("Failed to create appointment 2");
             }
+
+            resetForm();
         } catch (err) {
             console.error(err);
             toast.error("Failed to create appointment");
-        } finally {
-            loading = false;
         }
     }
 
     async function saveAppointment() {
         if (!appointment_id) return;
-        loading = true;
+
         const details = getAppointmentDetails();
         try {
             await updateAppointment(appointment_id, details);
@@ -113,14 +113,12 @@
         } catch (err) {
             console.error(err);
             toast.error("Failed to save appointment");
-        } finally {
-            loading = false;
         }
     }
 
     async function submitAppointmentFunc() {
         if (!appointment_id) return;
-        loading = true;
+
         try {
             await submitAppointment(appointment_id);
             await resetForm();
@@ -129,17 +127,14 @@
         } catch (err) {
             console.error(err);
             toast.error("Failed to submit appointment");
-        } finally {
-            loading = false;
         }
     }
 
     async function resetForm() {
-        const token = get(auth_token);
-
+        loading = true;
         if (appointment_id) {
             const appointment_data = await getAppointment(appointment_id);
-            const appointment: AppointmentFull = appointment_data?.message;
+            const appointment: Appointment = appointment_data?.message;
             console.log(appointment);
             slot_date = appointment.slot_date;
             selectedSlotName = appointment.slot;
@@ -154,15 +149,13 @@
             profile = profile_data?.message;
             companion = profile?.companion;
         }
+        loading = false;
     }
 
     onMount(async () => {
-        loading = true;
         await resetForm();
         const protocols_data = await getProtocolList(get(auth_token));
         protocol_list = protocols_data?.message;
-
-        loading = false;
     });
 </script>
 
