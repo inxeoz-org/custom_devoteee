@@ -5,12 +5,14 @@
 
     import { getDevoteeProfile } from "@src/api.js";
     import type { DevoteeeProfile } from "@src/app.js";
+    import LoadingPage from "../LoadingPage.svelte";
     let is_basic_info_completed = false;
-    let profile: DevoteeeProfile;
+    let devoteee_name = "";
+    let phone = "";
     export let title = "Dashboard";
     export let welcome = "Welcome back!";
 
-    let show_dashboard = false;
+    let loading = false;
 
     const defaultActions = [
         {
@@ -48,11 +50,17 @@
 
     onMount(async () => {
         try {
+            loading = true;
             const data = await getDevoteeProfile();
-            profile = data?.message;
+            const profile: DevoteeeProfile = data?.message;
+
+            devoteee_name = profile.devoteee_name ?? "";
+            phone = profile.phone ?? "";
 
             is_basic_info_completed =
-                profile.devoteee_name !== null && profile.phone !== null;
+                devoteee_name.length > 0 && phone.length > 0;
+
+            loading = false;
         } catch (error) {
             console.error("Failed to load profile:", error);
         }
@@ -63,17 +71,15 @@
     }
 </script>
 
-<div class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-    {#if show_dashboard}
+{#if loading}
+    <LoadingPage />
+{:else}
+    <div class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <Card class="w-full max-w-2xl text-center p-10">
             <h1 class="text-2xl font-bold text-gray-800 mb-2">{title}</h1>
             <p class="text-gray-600 mb-4">
                 {welcome}
-                {#if profile.devoteee_name}
-                    {profile.devoteee_name}
-                {:else}
-                    {"devotee"}
-                {/if}
+                {devoteee_name}
             </p>
 
             {#if !is_basic_info_completed}
@@ -104,13 +110,5 @@
                 {/each}
             </div>
         </Card>
-    {:else}
-        <p class="text-gray-600">
-            Details Not Found ! <Badge
-                color="red"
-                class="cursor-pointer"
-                onclick={() => goto("/login")}>Login First</Badge
-            >
-        </p>
-    {/if}
-</div>
+    </div>
+{/if}
