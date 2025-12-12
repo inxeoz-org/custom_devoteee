@@ -4,14 +4,12 @@
     import { Card, Button, Alert, Badge } from "flowbite-svelte";
 
     import { getDevoteeProfile } from "@src/api.js";
-    import { auth_token } from "@src/store.js";
-    import { get } from "svelte/store";
-
+    import type { DevoteeeProfile } from "@src/app.js";
+    let is_basic_info_completed = false;
+    let profile: DevoteeeProfile;
     export let title = "Dashboard";
     export let welcome = "Welcome back!";
 
-    let devoteee_name = "";
-    let phone = "";
     let show_dashboard = false;
 
     const defaultActions = [
@@ -27,12 +25,6 @@
             site: "/dashboard/mybooking",
             button_color: "blue",
         },
-        // {
-        //     id: "bookVip",
-        //     label: "Book - VIP Darshan",
-        //     site: "/dashboard/vipdarshan",
-        //     button_color: "blue",
-        // },
         {
             id: "bookShigra",
             label: "Book - Shigra Darshan",
@@ -57,13 +49,10 @@
     onMount(async () => {
         try {
             const data = await getDevoteeProfile();
-            const devoteee_details = data?.message;
+            profile = data?.message;
 
-            if (devoteee_details) {
-                show_dashboard = true;
-                devoteee_name = devoteee_details.devoteee_name || "";
-                phone = devoteee_details.phone || "";
-            }
+            is_basic_info_completed =
+                profile.devoteee_name !== null && profile.phone !== null;
         } catch (error) {
             console.error("Failed to load profile:", error);
         }
@@ -80,12 +69,14 @@
             <h1 class="text-2xl font-bold text-gray-800 mb-2">{title}</h1>
             <p class="text-gray-600 mb-4">
                 {welcome}
-                {#if devoteee_name}
-                    {devoteee_name}
+                {#if profile.devoteee_name}
+                    {profile.devoteee_name}
+                {:else}
+                    {"devotee"}
                 {/if}
             </p>
 
-            {#if phone.length < 3 || devoteee_name.length == 0}
+            {#if !is_basic_info_completed}
                 <Alert color="red">
                     Please complete your profile to continue.
                     <Badge

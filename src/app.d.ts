@@ -20,7 +20,7 @@ export type Companion = z.infer<typeof CompanionSchema>;
 -------------------------------------------- */
 
 export const DevoteeeProfile = z.object({
-  devoteee_name: z.string().min(1),
+  devoteee_name: z.string().min(1).nullable(),
   gender: z.string(),
 
   dob: z.string().transform((val) => {
