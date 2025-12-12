@@ -14,8 +14,10 @@ const defaultActions: Action[] = [
   { id: "bookBhasm", label: "Book - Bhasm Arti" },
 ];
 
+const AUTH_TOKEN_NAME = "devotee_auth_token";
+
 // ✅ SAFE localStorage usage
-const storedToken = browser ? localStorage.getItem("auth_token") : "";
+const storedToken = browser ? localStorage.getItem(AUTH_TOKEN_NAME) : "";
 
 export const auth_token = writable<string>(storedToken || "");
 
@@ -23,9 +25,9 @@ export const auth_token = writable<string>(storedToken || "");
 if (browser) {
   auth_token.subscribe((value) => {
     if (value) {
-      localStorage.setItem("auth_token", value);
+      localStorage.setItem(AUTH_TOKEN_NAME, value);
     } else {
-      localStorage.removeItem("auth_token");
+      localStorage.removeItem(AUTH_TOKEN_NAME);
     }
   });
 }
